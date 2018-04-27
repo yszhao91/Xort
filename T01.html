@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="js/GL.js" type="text/javascript" charset="utf-8"></script>
+
+		<script id='s-vs' type="text/x">
+			precision mediump float;
+			uniform float x2;
+			void main() {
+				vec4 x = vec4(0.0, 0.0, 0.0, 1.0);
+				gl_Position = x;
+			}
+		</script>
+
+		<script id='s-fs' type="text/x">
+			precision mediump float;
+			uniform float x2;
+			void main() {
+				vec4 x = vec4(x2, 0.0, 0.0, 1.0);
+				gl_FragColor = x;
+			}
+		</script>
+	</head>
+
+	<body>
+		<canvas id="test"></canvas>
+		<script type="text/javascript">
+			var gl = document.getElementById("test").getContext("webgl");
+
+			gl.clearColor(1.0, 1.0, 1.0, 1.0)
+
+			gl.enable(gl.DEPTH_TEST);
+			gl.depthFunc(gl.LEQUAL);
+
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			var vs = gl.createShader(gl.VERTEX_SHADER);
+			var vss = document.getElementById("s-vs").text
+			gl.shaderSource(vs, vss)
+
+			gl.compileShader(vs);
+			if(!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+				var err = gl.getShaderInfoLog(vs);
+				var lineno = parseInt(err.split(':')[2]);
+				var split = vss.split("\n");
+				for(var i in split) {
+					var q = parseInt(i);
+					console.log(q + "  " + split[i]);
+					if(i == lineno - 1) {
+						console.warn(err);
+					}
+				}
+				throw "Failed to compile vertex shader.";
+			}
+			var fs = gl.createShader(gl.FRAGMENT_SHADER);
+			var fss = document.getElementById("s-fs").text
+			gl.shaderSource(fs, fss)
+			gl.compileShader(fs);
+			if(!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+				var err = gl.getShaderInfoLog(fs);
+				var lineno = parseInt(err.split(':')[2]);
+				var split = fss.split("\n");
+				for(var i in split) {
+					var q = parseInt(i);
+					console.log(q + "  " + split[i]);
+					if(i == lineno - 1) {
+						console.warn(err);
+					}
+				}
+				throw "Failed to compile fragment  shader.";
+			}
+			var pg = gl.createProgram();
+			gl.attachShader(pg, vs);
+			gl.attachShader(pg, fs);
+
+			gl.linkProgram(pg); //链接以后  才能获取
+			var activeAttrNum = gl.getProgramParameter(pg, gl.ACTIVE_ATTRIBUTES);
+			for(var i = 0; i < activeAttrNum; i++) {
+				var activeInfo = gl.getActiveAttrib(pg, i)
+				console.log(activeInfo)
+			}
+
+			var activeunifNum = gl.getProgramParameter(pg, gl.ACTIVE_UNIFORMS);
+			for(var i = 0; i < activeunifNum; i++) {
+				var activeInfo = gl.getActiveUniform(pg, i)
+				console.log(activeInfo)
+
+			}
+			gl.getProgramParameter(pg, gl.ACTIVE_UNIFORMS);
+			gl.useProgram(pg);
+		</script>
+	</body>
+
+</html>
