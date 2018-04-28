@@ -168,20 +168,31 @@ function WebGLRder(args) {
 			for(var key in program_Attributes) {
 				var program_Attribute = program_Attributes[key],
 					geometry_attribute = geometry_attributes[key];
-				if(!program_Attribute || !geometry_attribute)
+				if(program_Attribute === undefined || geometry_attribute === undefined)
 					continue;
 
 				var data = geometry_attribute.data;
 				var size = geometry_attribute.size;
 				var offset = geometry_attribute.offset;
 				var normalized = geometry_attribute.normalized;
-				
-				gl.bindBuffer()
+				var type = gl.FLOAT;
+
+				var buffer = gl.createBuffer()
+				gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
+				gl.bufferData(GL.ARRAY_BUFFER, data, GL.STATIC_DRAW);
 				gl.vertexAttribPointer(program_Attribute, size, type, normalized, 4, 0);
 
 			}
+
+			//			modelViewMatrix; // optional
+			//			uniform mat4 projectionMatrix
+			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(new Mat4().es));
+			gl.uniformMatrix4fv(program_unifroms['projectionMatrix'], false, new Float32Array(new Mat4().es));
+			for(var key in material_uniforms) {
+				gl.uniform1f(program_unifroms[key], material_uniforms[key].value);
+			}
 			//绑定属性值
-			setupAttributes(material, program, geometry);
+			//setupAttributes(material, program, geometry);
 
 			if(object.isMesh) {
 				//				renderer.setMode(renderer.drawMode);

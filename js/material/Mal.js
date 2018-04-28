@@ -1,6 +1,9 @@
 //Mal——>Material 材质
+var malCount = 0;
+
 function Mal() {
 	this.type = "Mal";
+	this.id = malCount++;
 
 	this.fog = true;
 	this.lights = true;
@@ -35,7 +38,7 @@ Mal.prototype = {
 
 	setValues: function(values) {
 		if(!values) return;
-		
+
 		for(var key in values) {
 			var newValue = values[key];
 			if(!newValue) {

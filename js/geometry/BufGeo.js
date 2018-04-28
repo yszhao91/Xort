@@ -1,4 +1,5 @@
 //BufferGeometry
+
 function BufGeo() {
   this.uuid = Cm.uuid();
 
