@@ -1,8 +1,8 @@
 function WebGLRder(args) {
 	args = args || {};
-	var mine = this;
 
 	this.domElement = args.domElement || document.createElement("canvas");
+
 	var attributes = {
 		//			alpha: false,
 		//			depth: true,
@@ -13,21 +13,22 @@ function WebGLRder(args) {
 		//			powerPreference: _powerPreference
 	};
 
-	var gl = this.domElement.getContext("webgl2", attributes) || this.domElement.getContext("webgl", attributes);
-	this.gl = gl;
+	this.gl = this.domElement.getContext("webgl2", attributes) || this.domElement.getContext("webgl", attributes);
+	var gl = this.gl;
+	var mine = this;
 
 	this.version = gl.toString()[13] === "R" ? "1" : gl.toString()[13];
 	//Data Space Start-----------------------------------------
 	this.sort = true;
-	
-	var lightsArray = []; 
-	
+
+	var lightsArray = [];
+
 	var _depthVector3 = Vec3.create();
 	var _projScreenMat = Mat4.create();
-	
+
 	var opaqueObjects = [],
 		transparentObjects = [];
-		
+
 	var bufRder = new BufRder(gl);
 	var indexedBufferRder = new IndexedBufRder(gl);
 	//Data Space End-----------------------------------------
@@ -127,22 +128,12 @@ function WebGLRder(args) {
 	}
 
 	function setupAttributes(material, program, geometry, startIndex) {
-		//		var geometryAttributes = geometry.attributes;
-		//
-		//		var programAttributes = program.getAttributes();
-		//
-		//		var materialDefaultAttributeValues = material.defaultAttributeValues;
-		//		for(const name in programAttributes) {
-		//			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-		//			gl.vertexAttribPointer(
-		//				programAttributes,
-		//				size,
-		//				type,
-		//				normalized,
-		//				stride,
-		//				offset
-		//			);
-		//		}
+		//void vertexAttribPointer(uint index, int size, enum type, bool normalized, long stride, long offset);
+		//type: BYTE, SHORT, UNSIGNED_{BYTE, SHORT}, FIXED, FLOAT
+		//index: [0, MAX_VERTEX_ATTRIBS - 1]
+		//stride: [0, 255]
+		//offset, stride: must be a multiple of the type size in WebGL
+
 	}
 
 	function renderObjects(objects, scene, camera) {
@@ -165,10 +156,30 @@ function WebGLRder(args) {
 			var program_unifroms = material.program.getUniforms(),
 				program_Attributes = material.program.getAttributes(),
 				material_uniforms = material.uniforms,
-				geometry_attribute = geometry.attr;
+				geometry_attributes = geometry.attr;
 
-			//			gl.uniformMatrix4fv(program_unifroms[], false, mat4array);
+			var _gl = gl;
+			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+			//void vertexAttribPointer(uint index, int size, enum type, bool normalized, long stride, long offset);
+			//type: BYTE, SHORT, UNSIGNED_{BYTE, SHORT}, FIXED, FLOAT
+			//index: [0, MAX_VERTEX_ATTRIBS - 1]
+			//stride: [0, 255]
+			//offset, stride: must be a multiple of the type size in WebGL
+			for(var key in program_Attributes) {
+				var program_Attribute = program_Attributes[key],
+					geometry_attribute = geometry_attributes[key];
+				if(!program_Attribute || !geometry_attribute)
+					continue;
 
+				var data = geometry_attribute.data;
+				var size = geometry_attribute.size;
+				var offset = geometry_attribute.offset;
+				var normalized = geometry_attribute.normalized;
+				
+				gl.bindBuffer()
+				gl.vertexAttribPointer(program_Attribute, size, type, normalized, 4, 0);
+
+			}
 			//绑定属性值
 			setupAttributes(material, program, geometry);
 
