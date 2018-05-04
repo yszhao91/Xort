@@ -42,26 +42,17 @@
 		<script src="js/light/Light.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/light/AmbLight.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/light/DirLight.js" type="text/javascript" charset="utf-8"></script>
-
-		<style type="text/css">
-			html,
-			body {
-				overflow: hidden;
-				margin: 0;
-				padding: 0;
-			}
-		</style>
 	</head>
 
 	<body>
 		<div id="Container">
 
 		</div>
-		<script id="vertexSha" type="text/javascript">
+		<script id="vertexSha" type="text/xx">
 			precision mediump float;
 			precision mediump int;
-			uniform mat4 modelViewMatrix;
-			uniform mat4 projectionMatrix;
+			uniform mat4 modelViewMatrix; // optional
+			uniform mat4 projectionMatrix; // optional
 			attribute vec3 position;
 			attribute vec4 color;
 			varying vec3 vPosition;
@@ -73,7 +64,7 @@
 			}
 		</script>
 
-		<script id="fragmentSha" type="text/javascript">
+		<script id="fragmentSha" type="text/xx">
 			precision mediump float;
 			precision mediump int;
 			uniform float time;
@@ -98,7 +89,7 @@
 
 				container = document.getElementById('Container');
 
-				camera = new PerspectiveCam(50, window.innerWidth / window.innerHeight, 1, 1000);
+				camera = new PerspectiveCam(50, window.innerWidth / window.innerHeight, 1,1000);
 				camera.position.z = 2;
 
 				scene = new Scene();

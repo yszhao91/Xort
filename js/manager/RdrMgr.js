@@ -1,24 +1,22 @@
-function WebGLRder(args) {
+//Render Manager
+function RdrMgr(args) {
 	args = args || {};
+	this.wgl = args.wgl || new WebGL(args.renderConfig);
+	var camera = this.camera = args.camera || new PerspectiveCam();
+	var scene = this.scene = args.scene || new Scene();
 
-	this.domElement = args.domElement || document.createElement("canvas");
+	this.scene.add(this.camera);
+	
+	//管理器
+	var geoMgr = new GeoMgr();
+	var malMgr = new MalMgr();
+	var lightMgr = new LightMgr();
+	var geoAttrMgr = new BufAttrMgr();
 
-	var attributes = {
-		//			alpha: false,
-		//			depth: true,
-		//			stencil: _stencil,
-		antialias: true,
-		//			premultipliedAlpha: _premultipliedAlpha,
-		//			preserveDrawingBuffer: _preserveDrawingBuffer,
-		//			powerPreference: _powerPreference
-	};
+	//Data Space Start-----------------------------------------	
+	var wgl = this.wgl;
+	var gl = this.wgl.gl; 
 
-	this.gl = this.domElement.getContext("webgl2", attributes) || this.domElement.getContext("webgl", attributes);
-	var gl = this.gl;
-	var mine = this;
-
-	this.version = gl.toString()[13] === "R" ? "1" : gl.toString()[13];
-	//Data Space Start-----------------------------------------
 	this.sort = true;
 
 	var lightsArray = [];
@@ -32,6 +30,41 @@ function WebGLRder(args) {
 	var bufRder = new BufRder(gl);
 	var indexedBufferRder = new IndexedBufRder(gl);
 	//Data Space End-----------------------------------------
+
+	this.onframe = function() {
+		wgl.clear(true, true);
+		gl.clearColor(0.8, 0.9, 0.7, 1);
+		gl.clearDepth(true);
+
+		if(camera && camera.isCamera) {
+			console.error("WebGLRder.onframe:这不是摄像机");
+			return;
+		}
+		//更新场景
+		if(true) scene.updateMatWorld();
+		//更新摄像机
+		if(camera.parent === null) camera.updateMatWorld();
+
+		_projScreenMat.mulMats(camera.projectionMat, camera.matWorldInv)
+
+		handeScene(scene, camera, this.sort);
+
+		if(this.sort) {
+			opaqueObjects.sort(function(a, b) {
+				return a.z - b.z
+			});
+			transparentObjects.sort(function(a, b) {
+				return b.z - a.z
+			});
+		}
+
+		//不透明物体从前到后
+		if(opaqueObjects.length)
+			renderObjects(opaqueObjects, scene, camera);
+		//透明物体从后到前
+		if(transparentObjects.length)
+			renderObjects(transparentObjects, scene, camera);
+	}
 
 	function handeScene(object, camera, sort) {
 		if(!object.visible) return;
@@ -71,37 +104,6 @@ function WebGLRder(args) {
 		}
 	}
 
-	this.onframe = function(scene, camera) {
-		if(camera && camera.isCamera) {
-			console.error("WebGLRder.onframe:这不是摄像机");
-			return;
-		}
-		//更新场景
-		if(true) scene.updateMatWorld();
-		//更新摄像机
-		if(camera.parent === null) camera.updateMatWorld();
-
-		_projScreenMat.mulMats(camera.projectionMat, camera.matWorldInv)
-
-		handeScene(scene, camera, this.sort);
-
-		if(this.sort) {
-			opaqueObjects.sort(function(a, b) {
-				return a.z - b.z
-			});
-			transparentObjects.sort(function(a, b) {
-				return b.z - a.z
-			});
-		}
-
-		//不透明物体从前到后
-		if(opaqueObjects.length)
-			renderObjects(opaqueObjects, scene, camera);
-		//透明物体从后到前
-		if(transparentObjects.length)
-			renderObjects(transparentObjects, scene, camera);
-	}
-
 	function initMal(material, fog, object) {
 		var shader = {
 			name: material,
@@ -110,7 +112,7 @@ function WebGLRder(args) {
 			fragmentShader: material.fragmentShader
 		}
 
-		var program = new Program(mine, material, shader, null)
+		var program = new Program(wgl, material, shader, null)
 
 		material.program = program;
 	}
@@ -180,8 +182,8 @@ function WebGLRder(args) {
 				var buffer = gl.createBuffer()
 				gl.bindBuffer(GL.ARRAY_BUFFER, buffer);
 				gl.bufferData(GL.ARRAY_BUFFER, data, GL.STATIC_DRAW);
-				gl.vertexAttribPointer(program_Attribute, size, type, normalized, 4, 0);
-
+				gl.vertexAttribPointer(program_Attribute, size, type, normalized, 0, 0);
+				gl.enableVertexAttribArray(program_Attribute);
 			}
 
 			//			modelViewMatrix; // optional
@@ -194,12 +196,12 @@ function WebGLRder(args) {
 			//绑定属性值
 			//setupAttributes(material, program, geometry);
 
-			if(object.isMesh) {
-				//				renderer.setMode(renderer.drawMode);
-			}
+			//			if(object.isMesh) {
+			//				renderer.setMode(gl.TRIANGLES);
+			//			}
 
-			//			renderer.draw();
+			renderer.draw(gl.TRIANGLES, 0, 3);
 		}
 	}
+
 }
-WebGLRder.prototype = {};

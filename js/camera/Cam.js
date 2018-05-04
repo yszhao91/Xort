@@ -12,6 +12,10 @@ Cam.prototype = Object.assign(Object.create(Obj3D.prototype), {
 
   updateMatWorld: function(force) {
     Obj3D.prototype.updateMatWorld.call(this, force);
-//  this.matrixWorldInv.getInv(this.matWorld);
-  }
+    this.matWorldInv.getInv(this.matWorld);
+  },
+  
+  updateProjectionMat:function () {
+  	
+  },
 });

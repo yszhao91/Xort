@@ -2,95 +2,62 @@
 <html>
 
 	<head>
+		<meta lang="en">
 		<meta charset="UTF-8">
-		<title></title>
-		<script src="js/GL.js" type="text/javascript" charset="utf-8"></script>
-
-		<script id='s-vs' type="text/x">
-			precision mediump float;
-			uniform float x2;
-			void main() {
-				vec4 x = vec4(0.0, 0.0, 0.0, 1.0);
-				gl_Position = x;
-			}
-		</script>
-
-		<script id='s-fs' type="text/x">
-			precision mediump float;
-			uniform float x2;
-			void main() {
-				vec4 x = vec4(x2, 0.0, 0.0, 1.0);
-				gl_FragColor = x;
-			}
-		</script>
+		<title>WebGL study</title>
+		<link href="style/style.css">
+		<script type="text/javascript" src="js/js.js"></script>
 	</head>
 
 	<body>
-		<canvas id="test"></canvas>
+		<canvas id="canvas" width="200px" height="200px"></canvas>
 		<script type="text/javascript">
-			var gl = document.getElementById("test").getContext("webgl");
+			/**
+			 * Created by houbingshuai on 2016/12/3.
+			 */
+			window.onload = function() {
 
-			gl.clearColor(1.0, 1.0, 1.0, 1.0)
+				//顶点着色器程序
+				var VSHADER_SOURCE =
+					"void main() {" +
+					//设置坐标
+					"gl_Position = vec4(0.0, 0.0, 0.0, 1.0); " +
+					//设置尺寸
+					"gl_PointSize = 100.0; " +
+					"} ";
 
-			gl.enable(gl.DEPTH_TEST);
-			gl.depthFunc(gl.LEQUAL);
-
-			gl.clear(gl.COLOR_BUFFER_BIT);
-
-			var vs = gl.createShader(gl.VERTEX_SHADER);
-			var vss = document.getElementById("s-vs").text
-			gl.shaderSource(vs, vss)
-
-			gl.compileShader(vs);
-			if(!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
-				var err = gl.getShaderInfoLog(vs);
-				var lineno = parseInt(err.split(':')[2]);
-				var split = vss.split("\n");
-				for(var i in split) {
-					var q = parseInt(i);
-					console.log(q + "  " + split[i]);
-					if(i == lineno - 1) {
-						console.warn(err);
-					}
+				//片元着色器
+				var FSHADER_SOURCE =
+					"void main() {" +
+					//设置颜色
+					"gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);" +
+					"}";
+				//获取canvas元素
+				var canvas = document.getElementById('canvas');
+				//获取绘制二维上下文
+				var gl = canvas.getContext('webgl');
+				if(!gl) {
+					console.log("Failed");
+					return;
 				}
-				throw "Failed to compile vertex shader.";
-			}
-			var fs = gl.createShader(gl.FRAGMENT_SHADER);
-			var fss = document.getElementById("s-fs").text
-			gl.shaderSource(fs, fss)
-			gl.compileShader(fs);
-			if(!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
-				var err = gl.getShaderInfoLog(fs);
-				var lineno = parseInt(err.split(':')[2]);
-				var split = fss.split("\n");
-				for(var i in split) {
-					var q = parseInt(i);
-					console.log(q + "  " + split[i]);
-					if(i == lineno - 1) {
-						console.warn(err);
-					}
-				}
-				throw "Failed to compile fragment  shader.";
-			}
-			var pg = gl.createProgram();
-			gl.attachShader(pg, vs);
-			gl.attachShader(pg, fs);
+				//编译着色器
+				var vertShader = gl.createShader(gl.VERTEX_SHADER);
+				gl.shaderSource(vertShader, VSHADER_SOURCE);
+				gl.compileShader(vertShader);
 
-			gl.linkProgram(pg); //链接以后  才能获取
-			var activeAttrNum = gl.getProgramParameter(pg, gl.ACTIVE_ATTRIBUTES);
-			for(var i = 0; i < activeAttrNum; i++) {
-				var activeInfo = gl.getActiveAttrib(pg, i)
-				console.log(activeInfo)
-			}
+				var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+				gl.shaderSource(fragShader, FSHADER_SOURCE);
+				gl.compileShader(fragShader);
+				//合并程序
+				var shaderProgram = gl.createProgram();
+				gl.attachShader(shaderProgram, vertShader);
+				gl.attachShader(shaderProgram, fragShader);
+				gl.linkProgram(shaderProgram);
+				gl.useProgram(shaderProgram);
 
-			var activeunifNum = gl.getProgramParameter(pg, gl.ACTIVE_UNIFORMS);
-			for(var i = 0; i < activeunifNum; i++) {
-				var activeInfo = gl.getActiveUniform(pg, i)
-				console.log(activeInfo)
-
+				//绘制一个点
+				gl.drawArrays(gl.POINTS, 0, 1);
 			}
-			gl.getProgramParameter(pg, gl.ACTIVE_UNIFORMS);
-			gl.useProgram(pg);
 		</script>
 	</body>
 

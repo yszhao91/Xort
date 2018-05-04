@@ -124,7 +124,7 @@ Object.assign( Mat4.prototype, {
 
 		if ( ! ( euler && euler.isEuler ) ) {
 
-			console.error( 'THREE.Mat4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vec3 and order.' );
+			console.error( 'Mat4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vec3 and order.' );
 
 		}
 
@@ -344,7 +344,7 @@ Object.assign( Mat4.prototype, {
 
 		if ( n !== undefined ) {
 
-			console.warn( 'THREE.Mat4: .mul() now only accepts one argument. Use .mulMats( a, b ) instead.' );
+			console.warn( 'Mat4: .mul() now only accepts one argument. Use .mulMats( a, b ) instead.' );
 			return this.mulMats( m, n );
 
 		}
@@ -515,7 +515,7 @@ Object.assign( Mat4.prototype, {
 
 	},
 
-	getInverse: function ( m, throwOnDegenerate ) {
+	getInv: function ( m, throwOnDegenerate ) {
 
 		// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
 		var te = this.es,
@@ -535,7 +535,7 @@ Object.assign( Mat4.prototype, {
 
 		if ( det === 0 ) {
 
-			var msg = "THREE.Mat4: .getInverse() can't invert matrix, determinant is 0";
+			var msg = "Mat4: .getInv() can't invert matrix, determinant is 0";
 
 			if ( throwOnDegenerate === true ) {
 
@@ -788,7 +788,7 @@ Object.assign( Mat4.prototype, {
 
 		if ( far === undefined ) {
 
-			console.warn( 'THREE.Mat4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+			console.warn( 'Mat4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 		}
 

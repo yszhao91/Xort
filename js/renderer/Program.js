@@ -1,5 +1,5 @@
-function Program(renderer, material, shader, parameters) {
-	var gl = renderer.gl;
+function Program(wgl, material, shader, parameters) {
+	var gl = wgl.gl;
 	var program = gl.createProgram();
 
 	var vertexShader = shader.vertexShader;

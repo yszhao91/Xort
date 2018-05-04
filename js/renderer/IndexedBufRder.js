@@ -53,8 +53,7 @@ function IndexedBufRder(gl, extensions, infoRender) {
 	//
 
 	this.setMode = setMode;
-	this.setIndex = setIndex;
-	this.render = render;
+	this.setIndex = setIndex; 
 	this.renderInstances = renderInstances;
 
 }
