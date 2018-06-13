@@ -108,8 +108,8 @@ function RdrMgr(args) {
 		var shader = {
 			name: material,
 			uniforms: material.uniforms,
-			vertexShader: material.vertexShader,
-			fragmentShader: material.fragmentShader
+			vertexShader: material.vsSource,
+			fragmentShader: material.fsSource
 		}
 
 		var program = new Program(wgl, material, shader, null)
@@ -162,8 +162,8 @@ function RdrMgr(args) {
 				geometry_attributes = geometry.attr;
 
 			var _gl = gl;
-//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
-//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+			//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+			//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
 			//void vertexAttribPointer(uint index, int size, enum type, bool normalized, long stride, long offset);
 			//type: BYTE, SHORT, UNSIGNED_{BYTE, SHORT}, FIXED, FLOAT
 			//index: [0, MAX_VERTEX_ATTRIBS - 1]

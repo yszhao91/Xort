@@ -176,7 +176,7 @@
 		</script>
 		<script>
 			var rawMal = new RawShaMal({
-				vertexShader: vsSource,
+				vsSource: vsSource,
 				fsSource: fsSource,
 			})
 			var directGeo = new DirectGeo({
@@ -195,6 +195,7 @@
 					antialias: true
 				}
 			});
+			document.getElementById("Container").appendChild(RM.wgl.domElement)
 
 			RM.scene.add(mesh);
 
