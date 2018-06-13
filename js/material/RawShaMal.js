@@ -6,4 +6,5 @@ function RawShaMal(args) {
 RawShaMal.prototype = Object.assign(Object.create(Mal.prototype), {
 	constructor: RawShaMal,
 	isRawShaMal: true,
+	
 })

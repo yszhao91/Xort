@@ -1,4 +1,4 @@
-function WebGL(args) {
+function Wdrer(args) {
 	args = args || {};
 
 	this.domElement = args.domElement || document.createElement("canvas");
@@ -14,7 +14,7 @@ function WebGL(args) {
 	};
 
 	//属性 开始---------------------------------
-	var gl = this.gl = this.domElement.getContext("webgl2", attributes) || this.domElement.getContext("webgl", attributes);
+	var gl = this.gl = this.domElement.getContext("webgl", attributes);
 	this.version = this.gl.toString()[13] === "R" ? "1" : this.gl.toString()[13];
 	this.width = this.domElement.width;
 	this.height = this.domElement.height;
@@ -39,4 +39,4 @@ function WebGL(args) {
 	};
 
 }
-WebGL.prototype = {};
+Wdrer.prototype = {};

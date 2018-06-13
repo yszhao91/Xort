@@ -6,15 +6,15 @@ function ShaMal(args) {
 	//uniforms传入定义在Material中，attribute数据定义在BufferGeometry中
 	this.uniforms = {};
 
-	this.vertexShader = ['void main() {',
+	this.vsSource = args.vsSource || ['void main() {',
 		'\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
 		' }'
 	].join('\n');
-	this.fragmentShader = ['void main() {',
+	this.fsSource = args.fsSource || ['void main() {',
 		'\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );',
 		'}'
 	].join('\n');;
-	
+
 	this.setValues(args)
 }
 

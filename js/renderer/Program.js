@@ -1,5 +1,5 @@
-function Program(wgl, material, shader, parameters) {
-	var gl = wgl.gl;
+function Program(wdr, material, shader, parameters) {
+	var gl = wdr.gl;
 	var program = gl.createProgram();
 
 	var vertexShader = shader.vertexShader;
@@ -19,11 +19,11 @@ function Program(wgl, material, shader, parameters) {
 
 			parameters.map ? '#define USE_MAP' : '',
 
-			'uniform mat4 modelMatrix;',
-			'uniform mat4 modelViewMatrix;',
-			'uniform mat4 projectionMatrix;',
-			'uniform mat4 viewMatrix;',
-			'uniform mat3 normalMatrix;',
+			'uniform mat4 modelMat;',
+			'uniform mat4 modelViewMat;',
+			'uniform mat4 projectionMat;',
+			'uniform mat4 viewMat;',
+			'uniform mat3 normalMat;',
 			'uniform vec3 cameraPosition;',
 
 			'attribute vec3 position;',
@@ -39,7 +39,7 @@ function Program(wgl, material, shader, parameters) {
 
 			parameters.map ? '#define USE_MAP' : '',
 
-			'uniform mat4 viewMatrix;',
+			'uniform mat4 viewMat;',
 			'uniform vec3 cameraPosition;',
 		].join('\n');
 	}

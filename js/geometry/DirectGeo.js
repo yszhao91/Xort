@@ -4,3 +4,7 @@ function DirectGeo() {
   this.texcoords = [];
   this.indices = [];
 }
+
+DirectGeo.prototype={
+	
+}

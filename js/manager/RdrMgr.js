@@ -1,12 +1,12 @@
-//Render Manager
+//Renderer Manager
 function RdrMgr(args) {
 	args = args || {};
-	this.wgl = args.wgl || new WebGL(args.renderConfig);
+	this.wgl = args.wgl || new Wdrer(args.wglConfig);
 	var camera = this.camera = args.camera || new PerspectiveCam();
 	var scene = this.scene = args.scene || new Scene();
 
 	this.scene.add(this.camera);
-	
+
 	//管理器
 	var geoMgr = new GeoMgr();
 	var malMgr = new MalMgr();
@@ -15,7 +15,7 @@ function RdrMgr(args) {
 
 	//Data Space Start-----------------------------------------	
 	var wgl = this.wgl;
-	var gl = this.wgl.gl; 
+	var gl = this.wgl.gl;
 
 	this.sort = true;
 
@@ -144,8 +144,9 @@ function RdrMgr(args) {
 			const geometry = objects[i].geometry;
 			const material = objects[i].material;
 
+			//相机的视图矩阵是其模型矩阵的逆矩阵
 			object.modelViewMat.mulMats(camera.matWorldInv, object.matWorld);
-			object.normalMat.getNormalMat(object.modelViewMat);
+			object.normalMat.getNormalMat(object.modelViewMat); //
 
 			var program = getProgram(camera, scene.fog, material, object);
 			var index = geometry.index;
@@ -161,7 +162,8 @@ function RdrMgr(args) {
 				geometry_attributes = geometry.attr;
 
 			var _gl = gl;
-			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+//			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
 			//void vertexAttribPointer(uint index, int size, enum type, bool normalized, long stride, long offset);
 			//type: BYTE, SHORT, UNSIGNED_{BYTE, SHORT}, FIXED, FLOAT
 			//index: [0, MAX_VERTEX_ATTRIBS - 1]
@@ -188,8 +190,8 @@ function RdrMgr(args) {
 
 			//			modelViewMatrix; // optional
 			//			uniform mat4 projectionMatrix
-			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(new Mat4().es));
-			gl.uniformMatrix4fv(program_unifroms['projectionMatrix'], false, new Float32Array(new Mat4().es));
+			gl.uniformMatrix4fv(program_unifroms['modelViewMatrix'], false, new Float32Array(object.modelViewMat.es));
+			gl.uniformMatrix4fv(program_unifroms['projectionMatrix'], false, new Float32Array(camera.projectionMat.es));
 			for(var key in material_uniforms) {
 				gl.uniform1f(program_unifroms[key], material_uniforms[key].value);
 			}
