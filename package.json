@@ -1,0 +1,31 @@
+{
+  "name": "xtor",
+  "version": "0.0.1",
+  "description": "webgl渲染库",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yszhao91/Xtor.git"
+  },
+  "keywords": [
+    "webgl",
+    "webgl2",
+    "renderer"
+  ],
+  "author": "赵耀圣",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yszhao91/Xtor/issues"
+  },
+  "homepage": "https://github.com/yszhao91/Xtor#readme",
+  "devDependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.10.1",
+    "xtorcga": "0.0.8"
+  }
+}
