@@ -1,11 +1,12 @@
-function Scene() {
-	Obj3D.call(this);
-	this.type = 'Scene';
+export class Scene extends Thing {
+	constructor() {
+		super();
+		this.cameras = {};
+		this.defaultCamera = null;
+	}
 
-	this.fog = null;
-};
-
-Scene.prototype = Object.assign(Object.create(Obj3D.prototype), {
-	constructor: Scene,
-	isScene: true
-});
+	set CurrentCameram(camera) {
+		if (this.cameras.indexOf(camera) === -1)
+			this.cameras[camera.name||camera.id]
+	}
+} 

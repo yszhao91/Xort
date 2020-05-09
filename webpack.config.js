@@ -1,15 +1,15 @@
 // 一个常见的`webpack`配置文件
 const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin"); //打包到html
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const copyWebpackPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");//清除编译报
+const copyWebpackPlugin = require("copy-webpack-plugin");//复制文件
 // const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 const resolve = dir => path.resolve(__dirname, dir);
 
 module.exports = {
-  entry: __dirname + "/src/app.js", //已多次提及的唯一入口文件
+  entry: __dirname + "/index.js", //已多次提及的唯一入口文件
   output: {
     path: __dirname + "/dist",
     filename: "[name].[hash].js"
@@ -24,7 +24,8 @@ module.exports = {
     contentBase: "./dist", //本地服务器所加载的页面所在的目录
     historyApiFallback: true, //不跳转
     inline: true,
-    port: 9025,
+    host: "localhost",
+    port: 9005,
     open: true,
     hot: true
   },
@@ -40,19 +41,10 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
-        // use: ExtractTextPlugin.extract({
-        //     fallback: "style-loader",
-        //     use: ["css-loader"]
-        // })
       },
       {
         test: /\.scss$/,
         use: ["style-loader", "css-loader", "sass-loader"]
-        // use: ExtractTextPlugin.extract({
-        //     fallback: 'style-loader',
-        //     //resolve-url-loader may be chained before sass-loader if necessary
-        //     use: ['css-loader', 'sass-loader']
-        // })
       },
       {
         // test: /\.(dae|obj|glb|gltf)$/,
@@ -80,20 +72,12 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/
       }
-      //   {
-      //     test: /\.tsx?$/,
-      //     use: "ts-loader",
-      //     exclude: /node_modules/
-      //   }
-    ]
-  },
-  resolve: {
-    extensions: [".tsx", ".ts", ".js"],
-    plugins: [
-      //   new TsconfigPathsPlugin({
-      //     /* options: see below */
-      //   })
     ]
   },
   plugins: [
