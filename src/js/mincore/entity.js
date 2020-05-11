@@ -1,4 +1,3 @@
-
 export class Entity {
     constructor(name, app) {
         super({ name });
@@ -27,11 +26,14 @@ export class Entity {
     }
 
     compile() {
-        if (this._needsCompile) {
+        if (this._needsCompile)
+        {
             var data = this._data;
-            for (let i = 0; i < this._components.length; i++) {
+            for (let i = 0; i < this._components.length; i++)
+            {
                 const c = this._components[i];
-                switch (c) {
+                switch (c)
+                {
                     case GeometryComponent:
                         if (!data.geometry)
                             data.geometry = c;
@@ -70,7 +72,8 @@ export class Entity {
                 }
             }
 
-            if (!data.mesh && data.geometry) {
+            if (!data.mesh && data.geometry)
+            {
                 data.mesh = new Mesh(data.geometry._renderObject, data.material || defaultMaterial);
                 this._renderObject.add(data.mesh);
             }
@@ -80,7 +83,8 @@ export class Entity {
         if (this.parent && !this._renderObject.parent)
             this.parent._renderObject.add(this._renderObject);
 
-        for (let i = 0; i < this.children.length; i++) {
+        for (let i = 0; i < this.children.length; i++)
+        {
             const childEntity = this.children[i];
             childEntity.compile()
         }
@@ -99,13 +103,15 @@ export class Entity {
 
     addComponentEx(type, data) {
         var system = this._app.systems[type];
-        if (!system) {
+        if (!system)
+        {
             // #ifdef DEBUG
             console.error("addComponent: System " + type + " doesn't exist");
             // #endif
             return null;
         }
-        if (this.c[type]) {
+        if (this.c[type])
+        {
             // #ifdef DEBUG
             console.warn("addComponent: Entity already has " + type + " component");
             // #endif
@@ -116,13 +122,15 @@ export class Entity {
 
     removeComponent(type) {
         var system = this._app.systems[type];
-        if (!system) {
+        if (!system)
+        {
             // #ifdef DEBUG
             console.error("removeComponent: System " + type + " doesn't exist");
             // #endif
             return;
         }
-        if (!this.c[type]) {
+        if (!this.c[type])
+        {
             ;
             // #ifdef DEBUG
             console.warn("removeComponent: Entity doesn't have " + type + " component");
@@ -159,7 +167,8 @@ export class Entity {
     set guid(guid) {
         // remove current guid from entityIndex
         var index = this._app._entityIndex;
-        if (this.uuid) {
+        if (this.uuid)
+        {
             delete index[this.uuid];
         }
 
@@ -182,16 +191,19 @@ export class Entity {
 
         var i, len;
         var c = node._children;
-        for (i = 0, len = c.length; i < len; i++) {
+        for (i = 0, len = c.length; i < len; i++)
+        {
             if (c[i]._enabled)
                 this._notifyHierarchyStateChanged(c[i], enabled);
         }
 
         node._beingEnabled = false;
 
-        if (enableFirst) {
+        if (enableFirst)
+        {
             // do not cache the length here, as enableList may be added to during loop
-            for (i = 0; i < this._app._enableList.length; i++) {
+            for (i = 0; i < this._app._enableList.length; i++)
+            {
                 this._app._enableList[i]._onHierarchyStatePostChanged();
             }
 
@@ -205,13 +217,18 @@ export class Entity {
         // enable / disable all the components
         var component;
         var components = this.c;
-        for (var type in components) {
-            if (components.hasOwnProperty(type)) {
+        for (var type in components)
+        {
+            if (components.hasOwnProperty(type))
+            {
                 component = components[type];
-                if (component.enabled) {
-                    if (enabled) {
+                if (component.enabled)
+                {
+                    if (enabled)
+                    {
                         component.onEnable();
-                    } else {
+                    } else
+                    {
                         component.onDisable();
                     }
                 }
@@ -222,7 +239,8 @@ export class Entity {
     _onHierarchyStatePostChanged() {
         // post enable all the components
         var components = this.c;
-        for (var type in components) {
+        for (var type in components)
+        {
             if (components.hasOwnProperty(type))
                 components[type].onPostStateChange();
         }
@@ -239,7 +257,8 @@ export class Entity {
         if (this._guid === guid) return this;
 
         var e = this._app._entityIndex[guid];
-        if (e && (e === this || e.isDescendantOf(this))) {
+        if (e && (e === this || e.isDescendantOf(this)))
+        {
             return e;
         }
 
@@ -260,12 +279,14 @@ export class Entity {
         this._destroying = true;
 
         // Disable all enabled components first
-        for (name in this.c) {
+        for (name in this.c)
+        {
             this.c[name].enabled = false;
         }
 
         // Remove all components
-        for (name in this.c) {
+        for (name in this.c)
+        {
             this.c[name].system.removeComponent(this);
         }
 
@@ -275,8 +296,10 @@ export class Entity {
 
         var children = this._children;
         var child = children.shift();
-        while (child) {
-            if (child instanceof pc.Entity) {
+        while (child)
+        {
+            if (child instanceof pc.Entity)
+            {
                 child.destroy();
             }
 
@@ -295,7 +318,8 @@ export class Entity {
         this.off();
 
         // remove from entity index
-        if (this._guid) {
+        if (this._guid)
+        {
             delete this._app._entityIndex[this._guid];
         }
 
@@ -328,15 +352,18 @@ export class Entity {
         var clone = new pc.Entity(this._app);
         pc.GraphNode.prototype._cloneInternal.call(this, clone);
 
-        for (var type in this.c) {
+        for (var type in this.c)
+        {
             var component = this.c[type];
             component.system.cloneComponent(this, clone);
         }
 
         var i;
-        for (i = 0; i < this._children.length; i++) {
+        for (i = 0; i < this._children.length; i++)
+        {
             var oldChild = this._children[i];
-            if (oldChild instanceof pc.Entity) {
+            if (oldChild instanceof pc.Entity)
+            {
                 var newChild = oldChild._cloneRecursively(duplicatedIdsMap);
                 clone.addChild(newChild);
                 duplicatedIdsMap[oldChild.getGuid()] = newChild;

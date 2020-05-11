@@ -70,8 +70,165 @@ export class Program {
 
         return program;
     }
+    getParameters(material, lights, shadows, scene, nClipPlanes, nClipIntersection, object) {
+
+        var fog = scene.fog;
+        var environment = material.isMeshStandardMaterial ? scene.environment : null;
+
+        var envMap = material.envMap || environment;
+
+        var shaderID = shaderIDs[material.type];
+
+        // heuristics to create shader parameters according to lights in the scene
+        // (not to blow over maxLights budget)
+
+        var maxBones = object.isSkinnedMesh ? allocateBones(object) : 0;
+
+        if (material.precision !== null) {
+
+            precision = capabilities.getMaxPrecision(material.precision);
+
+            if (precision !== material.precision) {
+
+                console.warn('THREE.WebGLProgram.getParameters:', material.precision, 'not supported, using', precision, 'instead.');
+
+            }
+
+        }
+
+        var shaderobject = getShaderObject(material, shaderID);
+        material.onBeforeCompile(shaderobject, renderer);
+
+        var currentRenderTarget = renderer.getRenderTarget();
+
+        var parameters = {
+
+            isWebGL2: isWebGL2,
+
+            shaderID: shaderID,
+            shaderName: shaderobject.name,
+
+            uniforms: shaderobject.uniforms,
+            vertexShader: shaderobject.vertexShader,
+            fragmentShader: shaderobject.fragmentShader,
+            defines: material.defines,
+
+            isRawShaderMaterial: material.isRawShaderMaterial,
+            isShaderMaterial: material.isShaderMaterial,
+
+            precision: precision,
+
+            instancing: object.isInstancedMesh === true,
+
+            supportsVertexTextures: vertexTextures,
+            outputEncoding: (currentRenderTarget !== null) ? getTextureEncodingFromMap(currentRenderTarget.texture) : renderer.outputEncoding,
+            map: !!material.map,
+            mapEncoding: getTextureEncodingFromMap(material.map),
+            matcap: !!material.matcap,
+            matcapEncoding: getTextureEncodingFromMap(material.matcap),
+            envMap: !!envMap,
+            envMapMode: envMap && envMap.mapping,
+            envMapEncoding: getTextureEncodingFromMap(envMap),
+            envMapCubeUV: (!!envMap) && ((envMap.mapping === CubeUVReflectionMapping) || (envMap.mapping === CubeUVRefractionMapping)),
+            lightMap: !!material.lightMap,
+            lightMapEncoding: getTextureEncodingFromMap(material.lightMap),
+            aoMap: !!material.aoMap,
+            emissiveMap: !!material.emissiveMap,
+            emissiveMapEncoding: getTextureEncodingFromMap(material.emissiveMap),
+            bumpMap: !!material.bumpMap,
+            normalMap: !!material.normalMap,
+            objectSpaceNormalMap: material.normalMapType === ObjectSpaceNormalMap,
+            tangentSpaceNormalMap: material.normalMapType === TangentSpaceNormalMap,
+            clearcoatMap: !!material.clearcoatMap,
+            clearcoatRoughnessMap: !!material.clearcoatRoughnessMap,
+            clearcoatNormalMap: !!material.clearcoatNormalMap,
+            displacementMap: !!material.displacementMap,
+            roughnessMap: !!material.roughnessMap,
+            metalnessMap: !!material.metalnessMap,
+            specularMap: !!material.specularMap,
+            alphaMap: !!material.alphaMap,
+
+            gradientMap: !!material.gradientMap,
+
+            sheen: !!material.sheen,
+
+            combine: material.combine,
+
+            vertexTangents: (material.normalMap && material.vertexTangents),
+            vertexColors: material.vertexColors,
+            vertexUvs: !!material.map || !!material.bumpMap || !!material.normalMap || !!material.specularMap || !!material.alphaMap || !!material.emissiveMap || !!material.roughnessMap || !!material.metalnessMap || !!material.clearcoatMap || !!material.clearcoatRoughnessMap || !!material.clearcoatNormalMap || !!material.displacementMap,
+            uvsVertexOnly: !(!!material.map || !!material.bumpMap || !!material.normalMap || !!material.specularMap || !!material.alphaMap || !!material.emissiveMap || !!material.roughnessMap || !!material.metalnessMap || !!material.clearcoatNormalMap) && !!material.displacementMap,
+
+            fog: !!fog,
+            useFog: material.fog,
+            fogExp2: (fog && fog.isFogExp2),
+
+            flatShading: material.flatShading,
+
+            sizeAttenuation: material.sizeAttenuation,
+            logarithmicDepthBuffer: logarithmicDepthBuffer,
+
+            skinning: material.skinning && maxBones > 0,
+            maxBones: maxBones,
+            useVertexTexture: floatVertexTextures,
+
+            morphTargets: material.morphTargets,
+            morphNormals: material.morphNormals,
+            maxMorphTargets: renderer.maxMorphTargets,
+            maxMorphNormals: renderer.maxMorphNormals,
+
+            numDirLights: lights.directional.length,
+            numPointLights: lights.point.length,
+            numSpotLights: lights.spot.length,
+            numRectAreaLights: lights.rectArea.length,
+            numHemiLights: lights.hemi.length,
+
+            numDirLightShadows: lights.directionalShadowMap.length,
+            numPointLightShadows: lights.pointShadowMap.length,
+            numSpotLightShadows: lights.spotShadowMap.length,
+
+            numClippingPlanes: nClipPlanes,
+            numClipIntersection: nClipIntersection,
+
+            dithering: material.dithering,
+
+            shadowMapEnabled: renderer.shadowMap.enabled && shadows.length > 0,
+            shadowMapType: renderer.shadowMap.type,
+
+            toneMapping: material.toneMapped ? renderer.toneMapping : NoToneMapping,
+            physicallyCorrectLights: renderer.physicallyCorrectLights,
+
+            premultipliedAlpha: material.premultipliedAlpha,
+
+            alphaTest: material.alphaTest,
+            doubleSided: material.side === DoubleSide,
+            flipSided: material.side === BackSide,
+
+            depthPacking: (material.depthPacking !== undefined) ? material.depthPacking : false,
+
+            index0AttributeName: material.index0AttributeName,
+
+            extensionDerivatives: material.extensions && material.extensions.derivatives,
+            extensionFragDepth: material.extensions && material.extensions.fragDepth,
+            extensionDrawBuffers: material.extensions && material.extensions.drawBuffers,
+            extensionShaderTextureLOD: material.extensions && material.extensions.shaderTextureLOD,
+
+            rendererExtensionFragDepth: isWebGL2 || extensions.get('EXT_frag_depth') !== null,
+            rendererExtensionDrawBuffers: isWebGL2 || extensions.get('WEBGL_draw_buffers') !== null,
+            rendererExtensionShaderTextureLod: isWebGL2 || extensions.get('EXT_shader_texture_lod') !== null,
+
+            onBeforeCompile: material.onBeforeCompile
+
+        };
+
+        return parameters;
+
+    };
+
 
     a(parameters) {
+
+
 
         const prefixVertex = [
 
