@@ -1,18 +1,26 @@
-# XtorGL
+# Xort
+ 名字由来，Xor 异或 t是为了在npm包管理器中不重复
+ Xort 是一个web3d 引擎
+ 
+## 框架介绍，本渲染框架是ECS，
+E Entity    实体
+C Componet  组件
+S System    系统
+
+主要目的是为了配合编辑器开发，渲染部分也可以单独使用
 
 ## 安装
 
 ```shell
-    npm install xtorGL
+    npm install xtor
+    //国内镜像
+    cnpm install xtor
 ```
 
-基于 webgl 3D 渲染框架，参考 THREE.js，
-
-xtorGL
-基于 webgl 3D 渲染框架，参考 THREE.js
-
-xtorGL 一个基于 webgl，开源 3D 渲染框架，大家一起来，多 star，多提交 一起来，一起了解一个渲染框架的的流程和设计思想
-
+## 入门
+//TOODO
+ 
+ 
 ## 交流
 
-感兴趣者，可以加入 QQ 交流群：284389784
+ QQ：549184003
