@@ -1,56 +1,34 @@
 {
-  "name": "xtorgl",
+  "name": "xort",
   "version": "0.0.1",
-  "description": "webgl渲染库",
+  "description": "web 3D 渲染引擎框架",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yszhao91/Xtor.git"
+    "rlx": "tsc && npm publish",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview"
   },
   "keywords": [
     "webgl",
     "webgl2",
-    "renderer"
+    "webgpu",
+    "web3d"
   ],
   "author": "赵耀圣",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yszhao91/Xtor/issues"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yszhao91/Xort.git"
   },
-  "homepage": "https://github.com/yszhao91/Xtor#readme",
+  "bugs": {
+    "url": "https://github.com/yszhao91/Xort/issues"
+  },
+  "homepage": "https://github.com/yszhao91/Xort#readme",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.6",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^5.1.1",
-    "css-loader": "^3.4.1",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.12.0",
-    "rollup": "^1.27.14",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-gzip": "^2.2.0",
-    "rollup-plugin-node-resolve": "^5.0.1",
-    "rollup-plugin-uglify": "^6.0.4",
-    "rollup-watch": "^4.3.1",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^1.1.2",
-    "three": "^0.112.1",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "vuepress": "^1.2.0",
-    "webpack": "^4.41.5",
-    "webpack-cli": "3.3.10",
-    "webpack-dev-server": "3.10.1",
-    "xtorcga":"^0.0.23"
+    "typescript": "^4.3.2",
+    "vite": "^2.6.4",
+    "object_frame": "^0.0.20",
+    "xtorcga": "^0.0.69"
   }
 }
