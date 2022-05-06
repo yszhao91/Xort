@@ -1,4 +1,4 @@
-import earcut from "earcut";
+// import earcut from "earcut";
 import { Vec3 } from '../math/Vec3';
 import { flat } from '../utils/array';
 import { clone, rotateByUnitVectors } from './common';
@@ -52,7 +52,7 @@ export function triangulation(inboundary: any, holes: any[] = [], options: ITria
         baseIndex += hole.length;
     }
 
-    var result = earcut(vertextNumbers, holesIndex, dim);
+    // var result = earcut(vertextNumbers, holesIndex, dim);
 
-    return result;
+    // return result;
 }

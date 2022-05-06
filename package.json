@@ -26,9 +26,10 @@
   },
   "homepage": "https://github.com/yszhao91/Xort#readme",
   "devDependencies": {
+    "@webgpu/types": "^0.1.15",
+    "object_frame": "^0.0.20",
     "typescript": "^4.3.2",
     "vite": "^2.6.4",
-    "object_frame": "^0.0.20",
     "xtorcga": "^0.0.69"
   }
 }

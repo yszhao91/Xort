@@ -1,5 +1,5 @@
-import { BaseSystem } from "../core/baseSystem";
-import { ITimer } from "../core/timer";
+import { BaseSystem } from "../../core/baseSystem";
+import { ITimer } from "../../core/timer";
 
 export class TransformSystem extends BaseSystem {
     private static _instanced: TransformSystem;

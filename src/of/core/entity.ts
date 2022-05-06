@@ -3,11 +3,8 @@ import { IComponent, Component } from './component';
 import { Undefinable, Nullable } from '../utils/types';
 import { ITimer } from "..";
 import { UUID } from './uuid';
-import { DatComponentLibs } from '../../ui/datgui/DatComponentLibs';
-import { ComponentLibs } from "../../system/componentLib";
-import { WBEvent } from '../../system/workbench';
-import { message } from 'antd';
-
+import { ComponentLibs } from "../extends/componentLib";
+import { Xort } from '../../core/xort';
 export interface IObjectAdapter {
     createHostObject: Function;
 }
@@ -29,13 +26,14 @@ export interface IRunEvent {
  * entity下的object是固定的Object3D，当他的组件形成构成新的模型都是放在object3d
  * Component下的renderObject是变动的模型，大部分和ctype相关
  */
-export class Entity extends Thing implements IRunEvent {
+export abstract class Entity extends Thing implements IRunEvent {
     _components: IComponent[] = [];
     _componentMap: Map<any, IComponent | IComponent[]> = new Map();
     objectAdapter: Undefinable<IObjectAdapter>;
     private _object: any;
 
     _compileCache: any = {};
+    xort!: Xort;
     //是否需要更新  
 
     constructor(options: IEntityOptions = {}) {
@@ -140,10 +138,10 @@ export class Entity extends Thing implements IRunEvent {
             }
             (com as Component<any>).fire('addToEntity', this);
 
-            window.editor.fire(WBEvent.AddComponent, com);
+            if (this.xort)
+                this.xort.fire('onAddComponent', com);
             return true;
         } else {
-            message.warn('此类组件一个实体只能有一个，已经有存在组件')
             return false;
         }
 
@@ -171,8 +169,8 @@ export class Entity extends Thing implements IRunEvent {
             removeObj = this._components.splice(i, 1)[0];
             (com as Component<any>).fire('removeToEntity', this);
         }
-
-        window.editor.fire(WBEvent.RemoveComponent, removeObj)
+        if (this.xort)
+            this.xort.fire('onRemoveComponent', removeObj)
         return removeObj;
     }
 

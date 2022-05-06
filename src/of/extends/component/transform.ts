@@ -14,7 +14,7 @@
 import { Component, IComponentOption, MetaEntity } from "../../../of";
 import { Vec3, Quat, Mat4, Euler, Mat3 } from "../../../cga"; 
 import { ComponentLibs } from "../componentLib";
-import { TransformSystem } from "../../system/Transform";
+import { TransformSystem } from "../system/Transform";
 
 
 const _v1 = new Vec3();
