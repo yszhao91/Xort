@@ -550,6 +550,7 @@ interface HTMLCanvasElement {
   
   interface GPUComputePipelineDescriptor
     extends GPUPipelineDescriptorBase {
+    computeStage: any;
     compute: GPUProgrammableStage;
   }
   

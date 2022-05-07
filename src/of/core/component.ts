@@ -40,7 +40,6 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
      * 关联的资源
      */
     _asset: Undefinable<T | T[]>;
-    asset: Undefinable<T | T[]>;
 
     /**
      * 是否只允许存在一个
@@ -68,7 +67,7 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
         })
     }
 
-    onChange(descriptor?: IDescriptor, value?: any) {
+    onChange(_descriptor?: IDescriptor, _value?: any) {
 
     };
 
@@ -93,7 +92,7 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
     }
 
     removeFromEntity() {
-        return this.entity.removeComponent(this);
+        return this.entity?.removeComponent(this);
     }
 
     toJSONPre() {
@@ -165,7 +164,7 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
 
     }
 
-    nextStep(entity?: Entity) {
+    nextStep(_entity?: Entity) {
         if (!this._needsUpdate)
             return;
 
@@ -179,7 +178,7 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
         this.beforeupdate();
     }
 
-    update(option?: any): any {
+    update(_option?: any): any {
         if (!this.needsUpdate)
             return;
 

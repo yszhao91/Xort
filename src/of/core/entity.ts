@@ -228,7 +228,7 @@ export abstract class Entity extends Thing implements IRunEvent {
     unload() {
         const parent: Entity = this.parent as Entity;
         if (parent) {
-            this.parent.remove(this);
+            parent.remove(this);
             parent.object.remove(this.object);
         }
     }

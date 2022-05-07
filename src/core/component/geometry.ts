@@ -1,17 +1,14 @@
 import { Component, IDescriptor } from "../../of";
+import { GeometryData } from '../data/geometry';
 
-export class Geometry extends Component<any> {
-    declare position: Array<number>;
-    declare normal: Array<number>;
-    declare uvs: Array<Array<number>>;
-    declare tangent?: Array<number>;
-
+export class GeometryComponent extends Component<any> {
+    declare _asset: GeometryData;
     constructor() {
         super();
-        this.descriptors = [{ name: 'postion' }]
+        this.descriptors = [{ name: 'asset' }]
     }
 
-    onChange(descriptor?: IDescriptor, value?: any): void {
+    onChange(_descriptor?: IDescriptor, _value?: any): void {
 
     }
 

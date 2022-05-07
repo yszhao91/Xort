@@ -11,7 +11,7 @@
 import { ITimer } from "./timer";
 import { Entity } from "./entity";
 
-export class Scene extends Entity {
+export abstract class Scene extends Entity {
     constructor(option?: any) {
         super(option);
     }
