@@ -15,6 +15,5 @@ export * from './utils/defer'
 export * from './utils/optimize'
 export * from './utils/taskprocessor'
 export * from './utils/types'
-
-export * from './extends/scene/metascene'
+ 
 export * from './extends/entity/metaentity' 

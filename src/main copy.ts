@@ -1,4 +1,3 @@
-import { setShaderRegisteredCallback } from "./shadermodule";
 
 export const title = 'Hello Triangle';
 export const description = '渲染一个基本的三角形，WebGPU入门，练习熟悉基本的GPU对象及渲染基本步骤。';
@@ -42,9 +41,9 @@ export async function init(canvas: HTMLCanvasElement) {
     });
     new Float32Array(verticesBuffer.getMappedRange()).set(vertexArray);
     verticesBuffer.unmap();
-  
-  //渲染管线
-  const pipeline = device.createRenderPipeline({
+
+    //渲染管线
+    const pipeline = device.createRenderPipeline({
         vertex: {
             module: device.createShaderModule({
                 code: wgslShaders.vertex,
@@ -136,7 +135,7 @@ export async function init(canvas: HTMLCanvasElement) {
     frame()
     return frame;
 }
- 
+
 export const wgslShaders = {
     vertex: `
   @stage(vertex) 
@@ -149,5 +148,5 @@ export const wgslShaders = {
     return vec4<f32>(1.0, 0.0, 0.0, 1.0);
   }`,
 };
-  
+
 init(document.getElementById('canvas')!);

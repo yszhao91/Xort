@@ -60,9 +60,9 @@ export class MetaVision extends EventHandler {
             },
         });
 
-    }
+    } 
 
     render(scene: XortScene) {
-
+        
     }
 }
