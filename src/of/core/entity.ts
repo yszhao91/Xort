@@ -170,14 +170,18 @@ export abstract class Entity extends Thing implements IRunEvent {
             (com as Component<any>).fire('removeToEntity', this);
         }
         if (this.xort)
-            this.xort.fire('onRemoveComponent', removeObj)
+            this.xort.fire('onRemoveComponent', removeObj);
         return removeObj;
     }
 
-    updateComponents() {
+    updateComponents(handler: any) {
+        if (!this.needsUpdate)
+            return;
+        this.needsUpdate = false;
+
         for (let i = 0; i < this._components.length; i++) {
             const component: IComponent = this._components[i];
-            component.nextStep(this);
+            component.nextStep(handler, this);
         }
     }
 
@@ -185,11 +189,11 @@ export abstract class Entity extends Thing implements IRunEvent {
      * 最新定位:保持更新，运行相应程序
      * @param timer 
      */
-    update(timer: ITimer) {
+    update(handler: any) {
         for (let i = 0; i < this._components.length; i++) {
             const component: IComponent = this._components[i];
             if (component.update)
-                component.update(timer);
+                component.update(handler);
         }
     }
 
@@ -198,30 +202,26 @@ export abstract class Entity extends Thing implements IRunEvent {
      * @param timer 
      * @returns 
      */
-    nextStep(timer: ITimer) {
+    nextStep(handler: any) {
+        for (let i = 0; i < this.children.length; i++) {
+            const child: any = this.children[i];
+            child.nextStep(handler, this);
+        }
+
+        //先全部更新所有组件 
+        //没有组件需要更新当前的，entity就不需要更新
+        this.updateComponents(handler);
+
+        //只是针对当前场景
+        this.beforeupdate();
+
         /**
          * 混合(更新/执行)所有组件
          * 此时的update中 entity的所有组件已经完成编译
          * 可以在update中进行操作
          */
-        this.update(timer);
-
         if (!this.needsUpdate)
-            return;
-
-        for (let i = 0; i < this.children.length; i++) {
-            const child: any = this.children[i];
-            child.nextStep(timer);
-        }
-
-        //先全部更新所有组件
-        this.updateComponents();
-
-        //只是针对当前场景
-        this.beforeupdate();
-
-
-        this.needsUpdate = false;
+            this.update(handler);
     }
 
 

@@ -1,18 +1,33 @@
 import { EventHandler } from '../cga/render/eventhandler';
-import { GPUTextureFormat } from './webgpu';
 import { XortScene } from './scene';
+import { Xort } from './xort';
 
+export interface IViewport {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    minDepth: number,
+    maxDepth: number,
+}
 export class MetaVision extends EventHandler {
     isSupportWebGPU: boolean;
     private _canvas: HTMLCanvasElement;
     _options: any;
     adapter!: GPUAdapter;
     device!: GPUDevice;
-    gpucontext!: GPUCanvasContext;
+    context!: GPUCanvasContext;
     _width: number;
     _height: number;
     _pixelRatio: number = 1;
-    constructor(canvas: HTMLCanvasElement, options: any) {
+    depthTexture: any;
+    stencilTexture: any;
+
+    _viewport: IViewport;
+
+    commadnEncoder!: GPUCommandEncoder;
+    renderPass!: GPURenderPassEncoder;
+    constructor(private xort: Xort, canvas: HTMLCanvasElement, options: any) {
         super();
         this._options = options;
         this._canvas = canvas;
@@ -20,6 +35,7 @@ export class MetaVision extends EventHandler {
 
         this._width = this._canvas.width;
         this._height = this._canvas.height;
+        this._viewport = { x: 0, y: 0, width: canvas.width, height: canvas.height, minDepth: 0, maxDepth: 1 };
     }
 
     async init() {
@@ -38,19 +54,31 @@ export class MetaVision extends EventHandler {
         const device = await adapter.requestDevice(deviceDescriptor);
 
         const context = this._canvas.getContext('webgpu')!;
+        context.configure({ device, format: 'rgba8unorm' /* TODO */ });
 
         this.adapter = adapter;
         this.device = device;
-        this.gpucontext = context;
+        this.context = context;
 
+
+    }
+
+    setViewport(x: number, y: number, width: number, height: number, minDepth = 0，maxDepth = 1) {
+
+        this._viewport.x = x;
+        this._viewport.y = y;
+        this._viewport.width = width;
+        this._viewport.height = height;
+        this._viewport.minDepth = minDepth;
+        this._viewport.maxDepth = maxDepth;
     }
 
     setSize(width: number, height: number) {
         this._width = width;
         this._height = height;
-        this.gpucontext.configure({
+        this.context.configure({
             device: this.device,
-            format: GPUTextureFormat.BGRA8Unorm as any,
+            format: 'rgba8unorm',
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             compositingAlphaMode: 'premultiplied',
             size: {
@@ -60,9 +88,63 @@ export class MetaVision extends EventHandler {
             },
         });
 
-    } 
+    }
 
-    render(scene: XortScene) {
-        
+    render() {
+        this.commadnEncoder = this.device.createCommandEncoder()
+        const scene = this.xort.scene;
+        const textureView = this.context.getCurrentTexture().createView();
+        this.renderPass = this.commadnEncoder.beginRenderPass({
+            colorAttachments: [{
+                view: textureView,
+                clearValue: scene.background.array,
+                loadOp: 'clear',
+                storeOp: 'store'
+            }],
+            depthStencilAttachment: {
+                view: scene.depthTexture,
+                depthClearValue: 1.0,
+            }
+        });
+
+        const vp = this._viewport;
+        const width = vp.width * this._pixelRatio;
+        const height = vp.height * this._pixelRatio;
+        this.renderPass.setViewport(vp.x, vp.y, width, height, vp.minDepth, vp.maxDepth);
+        //TODO
+        this.renderPass.end();
+        this.device.queue.submit([this.commadnEncoder.finish()]);
+    }
+
+    renderObject(pipeline: GPURenderPipeline, group: GPUBindGroup, index:) {
+        this.renderPass.setPipeline(pipeline)
+        this.renderPass.setBindGroup(0, group);
+
+
+
+        this.device.queue.submit([this.commadnEncoder.finish()]);
+    }
+
+    private _setupIndex(buffer: any, renderPass: GPURenderPassEncoder) {
+        const indexFormat: GPUIndexFormat = (buffer instanceof Uint16Array) ? 'uint16' : 'uint32';
+        renderPass.setIndexBuffer(buffer, indexFormat);
+    }
+
+    private _setupVertex(renderPass: GPURenderPassEncoder,renderPipeline: GPURenderPipeline) {
+        const shaderAttributes = renderPipeline.shaderAttributes;
+
+        for (const shaderAttribute of shaderAttributes) {
+
+            const name = shaderAttribute.name;
+            const slot = shaderAttribute.slot;
+
+            const attribute = geometryAttributes[name];
+
+            if (attribute !== undefined) { 
+                const buffer = this._attributes.get(attribute).buffer;
+                renderPass.setVertexBuffer(slot, buffer); 
+            }
+
+        }
     }
 }

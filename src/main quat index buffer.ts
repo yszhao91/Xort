@@ -109,20 +109,14 @@ function createTriangle() {
     const renderPass = commandEncoder.beginRenderPass({
         colorAttachments: [{
             view: textureView,
-            clearValue: [0.2, 0.7, 1.0, 1.0],
+            clearValue: { r: 0.2, g: 0.7, b: 1.0, a: 1.0 },
             loadOp: 'clear',
             storeOp: 'store',
-        }],
-        depthStencilAttachment: {
-            view: textureView,
-
-        }
+        }]
     });
     renderPass.setPipeline(pipeline);
     renderPass.setVertexBuffer(0, vbuffer);
     renderPass.setIndexBuffer(ibuffer, 'uint16')
-    renderPass.drawIndirect()
-    // device.queue.writeBuffer 
 
     renderPass.drawIndexed(6);
     renderPass.end();

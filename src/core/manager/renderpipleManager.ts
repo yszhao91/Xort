@@ -1,24 +1,38 @@
-import { RenderPipeline } from '../renderpipeline';
-import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
-export class RenderPipelineMananger extends BaseManager { 
+import { Xort } from '../xort';
+import { XortEntity } from '../entity';
+export class RenderPipelineMananger extends BaseManager {
     constructor(xort: Xort) {
         super(xort)
     }
 
-    get(object: RenderPipeline) {
-        const device = this.xort._vision.device;
 
-    }
+    create(cacheKey: any, stageVertex: GPUVertexState, stageFragment: GPUFragmentState, entity: XortEntity) {
+        const material = entity.material;
+        const geometry = entity.geometry;
+        const sampleCount = this.xort.sampleCount;
 
-    _acquirePipeline() {
-        let pipeline;
+        const cachePipeline = this.get(entity);
+        if (cachePipeline === undefined) {
+            const rednerPipeline = device.createRenderPipeline({
+                vertex: Object.assign({}, stageVertex, { buffers: [] }),
 
-        if (!pipeline) {
-            pipeline = new RenderPipeline(this.xort, this.xort.sampleCount)
-            pipeline.create(cacheKey, stageVertex, stageFragment, object, nodeBuilder);
-
-            pipelines.push(pipeline);
+                fragment: Object.assign({}, stageFragment, {
+                    targets: [{
+                        format: material.colorFormat,
+                        blend: {
+                            alpha: material.alphaBlend,
+                            color: material.colorBlend
+                        },
+                        writeMask: material.colorWriteMask
+                    }]
+                }),
+                primitive: {},
+                multisample: {
+                    count: sampleCount
+                }
+            })
+            this.add(entity, rednerPipeline)
         }
     }
 }

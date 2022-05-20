@@ -12,34 +12,47 @@ export class TextureManager extends BaseManager {
 
     }
 
-    private _loadTexture(texture: Texture): boolean {
+
+
+    loadTexture(texture: Texture): boolean {
 
         let needsUpdate = false;
         const textureCache = this.get(texture)
         let textureGPU = textureCache.textureGPU;
 
-        const textureGPUDescriptor: any = {
-            // size: {
-            //     width: width,
-            //     height: height,
-            //     depthOrArrayLayers: depth,
-            // },
-            // mipLevelCount: mipLevelCount,
-            // sampleCount: 1,
-            // dimension: dimension,
-            // format: format,
-            // usage: usage
+        const textureGPUDescriptor: GPUTextureDescriptor = {
+            size: {
+                width: texture.width,
+                height: texture.height,
+                depthOrArrayLayers: texture.depth,
+            },
+            mipLevelCount: texture.mipLevelCount,
+            sampleCount: 1,
+            dimension: texture.dimension,
+            format: texture.format,
+            usage: GPUTextureUsage.TEXTURE_BINDING
+                | GPUTextureUsage.COPY_DST
+            // | GPUTextureUsage.RENDER_ATTACHMENT,
         };
 
-        if (textureGPU === undefined) {
 
+        if (textureGPU === undefined) { 
             textureGPU = this.device.createTexture(textureGPUDescriptor);
-            textureCache.textureGPU = textureGPU;
-
+            textureCache.textureGPU = textureGPU; 
             needsUpdate = true;
         }
 
         return needsUpdate;
     }
 
+    createDeeptexture() {
+        // 深度纹理
+        const depthTexture = device.createTexture({
+            size: [800, 600],
+            format: 'depth24plus',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        })
+
+        return depthTexture;
+    }
 }

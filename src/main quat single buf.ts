@@ -28,17 +28,32 @@ context.configure({
     format: 'rgba8unorm'
 })
 
+const vertices = new Float32Array([
+    -0.5, -0.5,  // vertex a
+    0.5, -0.5,  // vertex b
+    -0.5, 0.5,  // vertex d
+    -0.5, 0.5,  // vertex d
+    0.5, -0.5,  // vertex b
+    0.5, 0.5,  // vertex c
+]);
+const colors = new Float32Array([
+    1, 0, 0,    // vertex a: red
+    0, 1, 0,    // vertex b: green
+    1, 1, 0,    // vertex d: yellow
+    1, 1, 0,    // vertex d: yellow
+    0, 1, 0,    // vertex b: green
+    0, 0, 1     // vertex c: blue
+]);
 
 
 const vertexData = new Float32Array([
     -0.5, -0.5, 1, 0, 0,    // vertex a: red
     0.5, -0.5, 0, 1, 0,    // vertex b: green
-    0.5, 0.5, 0, 0, 1,     // vertex c: blue
-    -0.5, 0.5, 1, 1, 0,    // vertex d: yellow 
+    -0.5, 0.5, 1, 1, 0,    // vertex d: yellow
+    -0.5, 0.5, 1, 1, 0,    // vertex d: yellow
+    0.5, -0.5, 0, 1, 0,    // vertex b: green
+    0.5, 0.5, 0, 0, 1     // vertex c: blue
 ]);
-
-
-const indexData = new Uint16Array([0, 1, 2, 0, 2, 3]);
 
 
 const pipeline = device.createRenderPipeline({
@@ -58,9 +73,10 @@ const pipeline = device.createRenderPipeline({
                 {
                     shaderLocation: 1,
                     format: 'float32x3',
-                    offset: 8
+                    offset: 0
                 }
                 ]
+
             }
         ]
     },
@@ -73,6 +89,7 @@ const pipeline = device.createRenderPipeline({
     },
     primitive: {
         topology: "triangle-list",
+        // stripIndexFormat:'uint32',
     }
 })
 
@@ -87,44 +104,24 @@ function createGPUBuffer(device: GPUDevice, data: Float32Array, usageFlag: GPUBu
     return buffer;
 }
 
-
-function createIGPUBuffer(device: GPUDevice, data: Uint16Array, usageFlag: GPUBufferUsageFlags = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST) {
-    const buffer = device.createBuffer({
-        size: data.byteLength,
-        usage: usageFlag,
-        mappedAtCreation: true
-    });
-    new Uint16Array(buffer.getMappedRange()).set(data);
-    buffer.unmap();
-    return buffer;
-}
-
-
-const vbuffer = createGPUBuffer(device, vertexData)
-const ibuffer = createIGPUBuffer(device, indexData)
+ 
+const vbuffer = createGPUBuffer(device, vertexData) 
 
 function createTriangle() {
-    const commandEncoder: GPUCommandEncoder = device.createCommandEncoder();
+    const commandEncoder = device.createCommandEncoder();
     const textureView = context?.getCurrentTexture().createView();
     const renderPass = commandEncoder.beginRenderPass({
         colorAttachments: [{
             view: textureView,
-            clearValue: [0.2, 0.7, 1.0, 1.0],
+            clearValue: { r: 0.2, g: 0.7, b: 1.0, a: 1.0 },
             loadOp: 'clear',
             storeOp: 'store',
-        }],
-        depthStencilAttachment: {
-            view: textureView,
-
-        }
+        }]
     });
     renderPass.setPipeline(pipeline);
-    renderPass.setVertexBuffer(0, vbuffer);
-    renderPass.setIndexBuffer(ibuffer, 'uint16')
-    renderPass.drawIndirect()
-    // device.queue.writeBuffer 
-
-    renderPass.drawIndexed(6);
+    renderPass.setVertexBuffer(0, vbuffer); 
+    // renderPass.setIndexBuffer(ibuffer,'uint32')
+    renderPass.draw(6);
     renderPass.end();
     device.queue.submit([commandEncoder.finish()])
 }

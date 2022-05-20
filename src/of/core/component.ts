@@ -12,7 +12,7 @@ export interface IComponent extends IRunEvent {
     entity: Undefinable<Entity>;
     nextStep: Function;
     onChange?: Function;
-    update?: (timer?: ITimer) => any;
+    update?: (handler?: any) => any;
     execute?: Function; //所有的组件更新以后，总体执行每个组件，方便获取其他组件的数据
 }
 
@@ -164,7 +164,7 @@ export abstract class Component<T extends Asset> extends Thing implements ICompo
 
     }
 
-    nextStep(_entity?: Entity) {
+    nextStep(xort: any, _entity?: Entity) {
         if (!this._needsUpdate)
             return;
 
