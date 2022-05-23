@@ -63,7 +63,7 @@ export class MetaVision extends EventHandler {
 
     }
 
-    setViewport(x: number, y: number, width: number, height: number, minDepth = 0，maxDepth = 1) {
+    setViewport(x: number, y: number, width: number, height: number, minDepth = 0, maxDepth = 1) {
 
         this._viewport.x = x;
         this._viewport.y = y;
@@ -116,11 +116,9 @@ export class MetaVision extends EventHandler {
         this.device.queue.submit([this.commadnEncoder.finish()]);
     }
 
-    renderObject(pipeline: GPURenderPipeline, group: GPUBindGroup, index:) {
+    renderObject(pipeline: GPURenderPipeline, group: GPUBindGroup) {
         this.renderPass.setPipeline(pipeline)
-        this.renderPass.setBindGroup(0, group);
-
-
+        this.renderPass.setBindGroup(0, group); 
 
         this.device.queue.submit([this.commadnEncoder.finish()]);
     }
@@ -130,21 +128,9 @@ export class MetaVision extends EventHandler {
         renderPass.setIndexBuffer(buffer, indexFormat);
     }
 
-    private _setupVertex(renderPass: GPURenderPassEncoder,renderPipeline: GPURenderPipeline) {
-        const shaderAttributes = renderPipeline.shaderAttributes;
+    private _setupVertex(renderPass: GPURenderPassEncoder, renderPipeline: GPURenderPipeline) {
+        const shaderAttributes = renderPipeline;
 
-        for (const shaderAttribute of shaderAttributes) {
 
-            const name = shaderAttribute.name;
-            const slot = shaderAttribute.slot;
-
-            const attribute = geometryAttributes[name];
-
-            if (attribute !== undefined) { 
-                const buffer = this._attributes.get(attribute).buffer;
-                renderPass.setVertexBuffer(slot, buffer); 
-            }
-
-        }
     }
 }

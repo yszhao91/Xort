@@ -18,6 +18,9 @@ export class BufferAttribute {
     version: number;
     normalized: boolean;
     count: number;
+    offset: number = 0;
+    slot: number;
+    isInstanced: boolean = false
 
     readonly isBufferAttribute: true = true;
     /**
@@ -26,12 +29,14 @@ export class BufferAttribute {
      * @param itemSize 单元长度，vec3是3，vec4是4
      * @param normalized 
      */
-    constructor(array: TypedArray, itemSize: number, normalized?: boolean) {
+    constructor(array: TypedArray, itemSize: number, slot: number, isInstanced: boolean = false, normalized?: boolean) {
         this.name = '';
         this.array = array;
         this.itemSize = itemSize;
+        this.slot = slot;
         this.count = array !== undefined ? array.length / itemSize : 0;
         this.normalized = normalized === true;
+        this.isInstanced = isInstanced;
 
         // this.usage = StaticDrawUsage;
         this.updateRange = { offset: 0, count: - 1 };

@@ -8,7 +8,7 @@ export class RenderObjectMananger extends BaseManager {
 
     get(scene: XortScene, camera?: any): any {
 
-        const cameras = super.get(scene);
+        const cameras = scene.camera;
         let list;
 
         if (cameras === undefined) { 
@@ -53,7 +53,7 @@ export class WebGPURenderList {
         this.transparent.length = 0;
     }
 
-    getNextRenderItem(object, geometry, material, groupOrder, z, group) {
+    getNextRenderItem() {
 
         let renderItem = this.renderItems[this.renderItemsIndex];
         if (renderItem === undefined) {

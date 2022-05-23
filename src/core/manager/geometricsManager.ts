@@ -25,4 +25,5 @@ export class GeometricsMananger extends BaseManager {
                 attributes.update(geometryAttributes[name]);
         }
     }
+    
 }

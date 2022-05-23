@@ -9,7 +9,7 @@ import { Statistics } from "./statistics";
 import { RenderObjectMananger, WebGPURenderList } from './manager/renderManager';
 import { RenderStatesManager } from "./manager/renderStatesManager";
 
-       
+
 export class Xort extends EventHandler {
     _vision: MetaVision;
     _scene: XortScene;
@@ -33,7 +33,7 @@ export class Xort extends EventHandler {
     sortObjects: boolean = true;
     constructor(canvas: HTMLCanvasElement) {
         super();
-       this._vision = new MetaVision(this, canvas, {});
+        this._vision = new MetaVision(this, canvas, {});
         this._scene = new XortScene;
 
         this.statistics = new Statistics();
@@ -46,14 +46,11 @@ export class Xort extends EventHandler {
         this.defaultLoop = this.loop.bind(this)
     }
 
-    setviewPort(x, y, width, height, minDepth = 0, maxDepth = 1) {
-
-    }
 
     renderHandle() {
         this.scene.nextStep(this);
 
-        this._currentRenderList = this.objectManager.get(this.scene, camera);
+        this._currentRenderList = this.objectManager.get(this.scene);
         this._currentRenderList.init();
 
         this._currentRenderState = this.renderStateManager.get(this.scene);
@@ -70,7 +67,7 @@ export class Xort extends EventHandler {
     loop() {
         this.renderHandle();
 
-        this._vision.render(this._scene);
+        this._vision.render();
 
         requestAnimationFrame(this.defaultLoop);
     }
