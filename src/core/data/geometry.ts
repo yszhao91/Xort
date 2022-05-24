@@ -37,7 +37,7 @@ export class GeometryData {
         uv?: Array<number>,
         uv2?: Array<number>,
         tangent?: Array<number>,
-        color?: Array<number> 
+        color?: Array<number>
     } = {
             position: [],
         }
@@ -66,4 +66,10 @@ export class GeometryData {
         }
     }
 
+    static cubeGeometry(width: number = 1, height: number = 1, depth = 1, widthSegment: number = 1, heightSegment: number = 1, depthSegment: number = 1) {
+        const hw = width / 2;
+        const hh = height / 2;
+        const hd = depth / 2;
+        
+    }
 }

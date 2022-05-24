@@ -42,6 +42,13 @@ export class TextureManager extends BaseManager {
             needsUpdate = true;
         }
 
+        const sampler = this.device.createSampler({
+            minFilter: texture.minFilter,
+            magFilter: texture.magFilter,
+            addressModeU: texture.wrapU,
+            addressModeV: texture.wrapV,
+        })
+
         return needsUpdate;
     }
 

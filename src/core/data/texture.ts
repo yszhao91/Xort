@@ -11,6 +11,10 @@ export class Texture extends EventHandler {
     dimension: GPUTextureDimension = '2d';
     format: GPUTextureFormat = 'rgba8uint';
     mipmap: boolean = true;
+    minFilter: GPUFilterMode = 'linear';
+    magFilter: GPUFilterMode = 'linear'
+    wrapU: GPUAddressMode = 'repeat';
+    wrapV: GPUAddressMode = 'repeat';
 
     constructor() {
         super();
