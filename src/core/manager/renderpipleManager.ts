@@ -33,7 +33,7 @@ export class RenderPipelineMananger extends BaseManager {
 
         return currentPipeline;
     }
-    private _needsUpdate(object: XortEntity, cache: any) {
+    private _needsUpdate(_object: XortEntity, _cache: any) {
         return true;
     }
 

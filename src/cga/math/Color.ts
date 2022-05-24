@@ -1,7 +1,6 @@
 export class Color {
-    private _array: number[] = [];
-    constructor(public r: number = 1, public g: number = 1, public b: number = 1, public a: number = 1) {
-
+    private _array: number[] = new Array(4);
+    constructor(public r: number = 1, public g: number = 1, public b: number = 1, public a: number = 1) { 
     }
 
     get array() {
@@ -9,7 +8,10 @@ export class Color {
     }
 
     toArray() {
-        this._array.push(this.r, this.g, this.b, this.a);
+        this._array[0] = this.r;
+        this._array[1] = this.g;
+        this._array[2] = this.b;
+        this._array[3] = this.a;
         return this._array;
     }
 

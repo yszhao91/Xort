@@ -46,8 +46,22 @@ export class Xort extends EventHandler {
         this.defaultLoop = this.loop.bind(this)
     }
 
+    /**
+     * 切换场景
+     */
+    switchScene(scene: XortScene) {
+        this.scene = scene;
+    }
 
-    renderHandle() {
+    async start(loop: boolean = true) {
+        await this._vision.init();
+
+        if (loop)
+            this.defaultLoop()
+    }
+
+    preHandle() {
+        debugger
         this.scene.nextStep(this);
 
         this._currentRenderList = this.objectManager.get(this.scene);
@@ -65,15 +79,11 @@ export class Xort extends EventHandler {
     }
 
     loop() {
-        this.renderHandle();
+        this.preHandle();
 
         this._vision.render();
 
         requestAnimationFrame(this.defaultLoop);
-    }
-
-    async init() {
-        await this._vision.init();
     }
 
     get scene() {

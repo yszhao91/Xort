@@ -7,27 +7,22 @@ class WebGPURenderState {
 
     constructor() {
 
-        this.lightsNode = new LightsNode();
 
-        this.lightsArray = [];
 
     }
 
     init() {
 
-        this.lightsArray.length = 0;
 
     }
 
-    pushLight(light) {
+    pushLight(light: any) {
 
-        this.lightsArray.push(light);
 
     }
 
     getLightNode() {
 
-        return this.lightsNode.fromLights(this.lightsArray);
 
     }
 

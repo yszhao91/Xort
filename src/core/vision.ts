@@ -1,5 +1,4 @@
-import { EventHandler } from '../cga/render/eventhandler';
-import { XortScene } from './scene';
+import { EventHandler } from '../cga/render/eventhandler'; 
 import { Xort } from './xort';
 
 export interface IViewport {
@@ -76,11 +75,16 @@ export class MetaVision extends EventHandler {
     setSize(width: number, height: number) {
         this._width = width;
         this._height = height;
+        this._canvas.style.width = width + 'px';
+        this._canvas.style.height = height + 'px';
+
+        this.setViewport(0, 0, width, height);
+
         this.context.configure({
             device: this.device,
             format: 'rgba8unorm',
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
-            compositingAlphaMode: 'premultiplied',
+            compositingAlphaMode: 'opaque',//'premultiplied'
             size: {
                 width: Math.floor(this._width * this._pixelRatio),
                 height: Math.floor(this._height * this._pixelRatio),
@@ -101,10 +105,10 @@ export class MetaVision extends EventHandler {
                 loadOp: 'clear',
                 storeOp: 'store'
             }],
-            depthStencilAttachment: {
-                view: scene.depthTexture,
-                depthClearValue: 1.0,
-            }
+            // depthStencilAttachment: {
+            //     view: scene.depthTexture,
+            //     depthClearValue: 1.0,
+            // }
         });
 
         const vp = this._viewport;
@@ -118,7 +122,7 @@ export class MetaVision extends EventHandler {
 
     renderObject(pipeline: GPURenderPipeline, group: GPUBindGroup) {
         this.renderPass.setPipeline(pipeline)
-        this.renderPass.setBindGroup(0, group); 
+        this.renderPass.setBindGroup(0, group);
 
         this.device.queue.submit([this.commadnEncoder.finish()]);
     }

@@ -13,6 +13,15 @@ const enitity = new XortEntity();
 enitity.addComponent(new GeometryComponent());
 scene.add(enitity);
 xort.scene = scene;
-await xort.init();
+await xort.start();
+xort._vision.setSize(window.innerWidth, window.innerHeight);
+
+window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    xort._vision.setSize(width, height);
+
+})
 
 xort.loop();
+

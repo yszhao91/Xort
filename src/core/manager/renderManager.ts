@@ -6,21 +6,21 @@ export class RenderObjectMananger extends BaseManager {
         super(xort)
     }
 
-    get(scene: XortScene, camera?: any): any {
+    get(scene: XortScene): any {
 
-        const cameras = scene.camera;
+        const camera = scene.camera;
         let list;
 
-        if (cameras === undefined) { 
+        if (camera === undefined) {
             list = new WebGPURenderList();
-            super.add(scene, new WeakMap());
-            super.get(scene).set(camera, list);
+            // super.add(scene, new WeakMap());
+            // super.get(scene).set(camera, list);
 
         } else {
-            list = cameras.get(camera);
+            list = camera.get(camera);
             if (list === undefined) {
                 list = new WebGPURenderList();
-                cameras.set(camera, list);
+                camera.set(camera, list);
             }
         }
         return list;

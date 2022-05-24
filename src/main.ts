@@ -120,8 +120,7 @@ function createTriangle() {
     });
     renderPass.setPipeline(pipeline);
     renderPass.setVertexBuffer(0, vbuffer);
-    renderPass.setIndexBuffer(ibuffer, 'uint16')
-    renderPass.drawIndirect()
+    renderPass.setIndexBuffer(ibuffer, 'uint16');
     // device.queue.writeBuffer 
 
     renderPass.drawIndexed(6);
