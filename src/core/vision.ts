@@ -1,4 +1,4 @@
-import { EventHandler } from '../cga/render/eventhandler'; 
+import { EventHandler } from '../cga/render/eventhandler';
 import { Xort } from './xort';
 
 export interface IViewport {
@@ -95,8 +95,11 @@ export class MetaVision extends EventHandler {
     }
 
     render() {
+        const pipelineManager = this.xort.renderpipelineManager;
         this.commadnEncoder = this.device.createCommandEncoder()
         const scene = this.xort.scene;
+
+        scene.opaque
         const textureView = this.context.getCurrentTexture().createView();
         this.renderPass = this.commadnEncoder.beginRenderPass({
             colorAttachments: [{
@@ -115,17 +118,35 @@ export class MetaVision extends EventHandler {
         const width = vp.width * this._pixelRatio;
         const height = vp.height * this._pixelRatio;
         this.renderPass.setViewport(vp.x, vp.y, width, height, vp.minDepth, vp.maxDepth);
-        //TODO
+
+        for (let i = 0, len = scene.opaque.length; i < len; i++) {
+            const opaqueObject = scene.opaque[i];
+            const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
+            const geometry = opaqueObject.geometry;
+
+            for (const key in geometry.attributes) {
+                const attribute = geometry.attributes[key];
+                this.xort.geometricManager.get(attribute);
+                this.renderPass.setVertexBuffer(attribute.slot, attribute);
+            }
+            if (geometry.index) {
+                const bufferData = this.xort.geometricManager.get(geometry.index);
+                this.renderPass.setIndexBuffer(bufferData.buffer, 'uint32')
+            }
+
+            this.renderPass.setPipeline(pipeline)
+            this.renderPass.setBindGroup(0, group);
+            if (geometry.index)
+                this.renderPass.drawIndexed(geometry.index.length);
+            else
+                this.renderPass.draw(geometry.position.length);
+        }
+
+
         this.renderPass.end();
         this.device.queue.submit([this.commadnEncoder.finish()]);
     }
 
-    renderObject(pipeline: GPURenderPipeline, group: GPUBindGroup) {
-        this.renderPass.setPipeline(pipeline)
-        this.renderPass.setBindGroup(0, group);
-
-        this.device.queue.submit([this.commadnEncoder.finish()]);
-    }
 
     private _setupIndex(buffer: any, renderPass: GPURenderPassEncoder) {
         const indexFormat: GPUIndexFormat = (buffer instanceof Uint16Array) ? 'uint16' : 'uint32';

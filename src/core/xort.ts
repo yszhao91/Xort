@@ -6,8 +6,9 @@ import { TextureManager } from './manager/texturemanager';
 import { Timer } from '../of/core/timer';
 import { AttributeManager } from './manager/attributeManager';
 import { Statistics } from "./statistics";
-import { RenderObjectMananger, WebGPURenderList } from './manager/renderManager';
+import { RenderObjectMananger } from './manager/renderManager';
 import { RenderStatesManager } from "./manager/renderStatesManager";
+import { RenderPipelineMananger } from "./manager/renderpipleManager";
 
 
 export class Xort extends EventHandler {
@@ -19,12 +20,11 @@ export class Xort extends EventHandler {
 
     textureManager: TextureManager;
     geometricManager: GeometricsMananger;
-    attributeManager: AttributeManager;
-    objectManager: RenderObjectMananger;
+    attributeManager: AttributeManager; 
+    renderpipelineManager: RenderPipelineMananger;
     renderStateManager: RenderStatesManager;
     statistics: Statistics;
     sampleCount: number = 1;
-    private _currentRenderList!: WebGPURenderList;
     _currentRenderState: any;
 
     /**
@@ -34,13 +34,13 @@ export class Xort extends EventHandler {
     constructor(canvas: HTMLCanvasElement) {
         super();
         this._vision = new MetaVision(this, canvas, {});
-        this._scene = new XortScene;
+        this._scene = new XortScene(this);
 
         this.statistics = new Statistics();
         this.geometricManager = new GeometricsMananger(this);
         this.textureManager = new TextureManager(this);
-        this.attributeManager = new AttributeManager(this);
-        this.objectManager = new RenderObjectMananger(this);
+        this.attributeManager = new AttributeManager(this); 
+        this.renderpipelineManager = new RenderPipelineMananger(this);
         this.renderStateManager = new RenderStatesManager(this);
 
         this.defaultLoop = this.loop.bind(this)
@@ -61,17 +61,11 @@ export class Xort extends EventHandler {
     }
 
     preHandle() {
-        debugger
-        this.scene.nextStep(this);
 
-        this._currentRenderList = this.objectManager.get(this.scene);
-        this._currentRenderList.init();
+        this.scene.nextStep(this); 
 
         this._currentRenderState = this.renderStateManager.get(this.scene);
         this._currentRenderState.init();
-
-
-        this._currentRenderList.finish();
 
         if (this.sortObjects === true) {
 

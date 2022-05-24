@@ -1,29 +1,36 @@
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
 import { XortScene } from '../scene';
+import { XortEntity } from '../entity';
+
+
+export interface IRenderObject {
+    entity: XortEntity;
+    geometry: any;
+    material: any;
+    renderOrder: number;
+}
+
 export class RenderObjectMananger extends BaseManager {
+    opaque: XortEntity[] = [];
+    transparent: XortEntity[] = [];
+    items: XortEntity[] = [];
     constructor(xort: Xort) {
         super(xort)
     }
 
-    get(scene: XortScene): any {
-
-        const camera = scene.camera;
-        let list;
-
-        if (camera === undefined) {
-            list = new WebGPURenderList();
-            // super.add(scene, new WeakMap());
-            // super.get(scene).set(camera, list);
-
-        } else {
-            list = camera.get(camera);
-            if (list === undefined) {
-                list = new WebGPURenderList();
-                camera.set(camera, list);
-            }
+    leveltraverse(entity: XortEntity) {
+        for (let i = 0; i < entity.children.length; i++) {
+            const child = entity.children[i] as XortEntity;
+            this.items.push(child);
+            this.leveltraverse(child);
         }
-        return list;
+    }
+
+    load(scene: XortScene): any {
+        this.leveltraverse(scene as unknown as XortEntity);
+        this.opaque = this.items.filter(v => v.material.transparent);
+        this.transparent = this.items.filter(v => !v.material.transparent);
     }
 
     dispose() {
@@ -32,109 +39,8 @@ export class RenderObjectMananger extends BaseManager {
 }
 
 
-export class WebGPURenderList {
-    renderItems: any[];
-    renderItemsIndex: number;
-    opaque: any[];
-    transparent: any[];
 
-    constructor() {
-        this.renderItems = [];
-        this.renderItemsIndex = 0;
-
-        this.opaque = [];
-        this.transparent = [];
-    }
-
-    init() {
-        this.renderItemsIndex = 0;
-
-        this.opaque.length = 0;
-        this.transparent.length = 0;
-    }
-
-    getNextRenderItem() {
-
-        let renderItem = this.renderItems[this.renderItemsIndex];
-        if (renderItem === undefined) {
-
-            renderItem = {
-                id: object.id,
-                object: object,
-                geometry: geometry,
-                material: material,
-                groupOrder: groupOrder,
-                renderOrder: object.renderOrder,
-                z: z,
-                group: group
-            };
-
-            this.renderItems[this.renderItemsIndex] = renderItem;
-
-        } else {
-
-            renderItem.id = object.id;
-            renderItem.object = object;
-            renderItem.geometry = geometry;
-            renderItem.material = material;
-            renderItem.groupOrder = groupOrder;
-            renderItem.renderOrder = object.renderOrder;
-            renderItem.z = z;
-            renderItem.group = group;
-
-        }
-
-        this.renderItemsIndex++;
-        return renderItem;
-    }
-
-    push(object, geometry, material, groupOrder, z, group) {
-
-        const renderItem = this.getNextRenderItem(object, geometry, material, groupOrder, z, group);
-
-        (material.transparent === true ? this.transparent : this.opaque).push(renderItem);
-
-    }
-
-    unshift(object, geometry, material, groupOrder, z, group) {
-
-        const renderItem = this.getNextRenderItem(object, geometry, material, groupOrder, z, group);
-
-        (material.transparent === true ? this.transparent : this.opaque).unshift(renderItem);
-
-    }
-
-    sort(customOpaqueSort, customTransparentSort) {
-
-        if (this.opaque.length > 1) this.opaque.sort(customOpaqueSort || painterSortStable);
-        if (this.transparent.length > 1) this.transparent.sort(customTransparentSort || reversePainterSortStable);
-
-    }
-
-    finish() {
-
-        // Clear references from inactive renderItems in the list
-
-        for (let i = this.renderItemsIndex, il = this.renderItems.length; i < il; i++) {
-
-            const renderItem = this.renderItems[i];
-
-            if (renderItem.id === null) break;
-
-            renderItem.id = null;
-            renderItem.object = null;
-            renderItem.geometry = null;
-            renderItem.material = null;
-            renderItem.program = null;
-            renderItem.group = null;
-
-        }
-
-    }
-
-}
-
-function painterSortStable(a, b) {
+export function painterSortStable(a: { groupOrder: number; renderOrder: number; material: { id: number; }; z: number; id: number; }, b: { groupOrder: number; renderOrder: number; material: { id: number; }; z: number; id: number; }) {
 
     if (a.groupOrder !== b.groupOrder) {
 
@@ -160,7 +66,7 @@ function painterSortStable(a, b) {
 
 }
 
-function reversePainterSortStable(a, b) {
+export function reversePainterSortStable(a: { groupOrder: number; renderOrder: number; z: number; id: number; }, b: { groupOrder: number; renderOrder: number; z: number; id: number; }) {
 
     if (a.groupOrder !== b.groupOrder) {
 

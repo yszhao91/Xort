@@ -28,7 +28,9 @@ class WebGPURenderState {
 
 }
 
-
+/**
+ * 记录管理渲染状态
+ */
 export class RenderStatesManager extends BaseManager {
     constructor(xort: Xort) {
         super(xort);

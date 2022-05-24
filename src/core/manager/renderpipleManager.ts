@@ -6,7 +6,7 @@ export class RenderPipelineMananger extends BaseManager {
         super(xort)
     }
 
-    acquire(entity: XortEntity) {
+    acquire(entity: XortEntity): GPURenderPipeline {
         const device = this.xort._vision.device;
 
         const cache = this.get(entity);
@@ -43,7 +43,7 @@ export class RenderPipelineMananger extends BaseManager {
         const geometry = entity.geometry;
         const sampleCount = this.xort.sampleCount;
 
-        const cachePipeline = this.get(entity);
+        let cachePipeline = this.get(entity);
         if (cachePipeline === undefined) {
             const vertexBuffers: GPUVertexBufferLayout[] = [];
             for (const name in geometry.attributes) {
@@ -59,7 +59,7 @@ export class RenderPipelineMananger extends BaseManager {
                 });
             }
 
-            const rednerPipeline: GPURenderPipeline = device.createRenderPipeline({
+            const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
                 vertex: Object.assign({}, stageVertex, { buffers: vertexBuffers }),
 
                 fragment: Object.assign({}, stageFragment, {
@@ -77,10 +77,10 @@ export class RenderPipelineMananger extends BaseManager {
                     count: sampleCount
                 }
             })
-            this.add(entity, rednerPipeline)
-
+            this.add(entity, renderPipeline)
+            cachePipeline = renderPipeline;
         }
+        return cachePipeline;
     }
 
-}
-Object.assign({}, { a: [] }, { a: [1, 2, 3] })
+} 

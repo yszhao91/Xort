@@ -10,6 +10,9 @@ export class MaterialData {
     fragmentShaderCode: string = fragmentVertexCode;
     computeShader?: string;
 
+    transparent: boolean = false;
+    opacity: number = 1;
+
     constructor() {
 
     }

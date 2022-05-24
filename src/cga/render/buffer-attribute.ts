@@ -21,6 +21,9 @@ export class BufferAttribute {
     offset: number = 0;
     slot: number;
     isInstanced: boolean = false
+ 
+    isInterleaved: boolean = false;
+    instanceCount: number = 1;
 
     readonly isBufferAttribute: true = true;
     /**
