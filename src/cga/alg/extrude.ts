@@ -9,20 +9,19 @@
 
 import { Vec3, v3, IVec3, IVec2 } from '../math/Vec3';
 import { Vec2 } from '../math/Vec2';
-import { quat, Quat } from '../math/Quat';
+import { quat } from '../math/Quat';
 import { Path } from '../struct/3d/Path';
-import { clone, rotateByUnitVectors, angle } from './common';
+import { clone, rotateByUnitVectors } from './common';
 import { applyMat4, translate } from './pointset';
-import { indexable } from '../render/mesh';
 import { AxisPlane, triangulation } from './trianglution';
 import { flat, unique } from '../utils/array';
 import { isDefined, isUndefined } from '../utils/types';
 import { m4 } from '../math/Mat4';
-import { IGeometry } from '../render/geometry';
 import { RADIANS_PER_DEGREE } from '../math/Math';
 import vector from '../math/vector';
 import { ArrayList } from '../struct/data/ArrayList';
 import { Distance } from '../basic/distance';
+import { IGeometry, indexable } from '../struct/data/geometry';
 
 export interface ILinkSideOption {
     side0: { x: number, y: number, z: number, index?: number }[] | number[];//可能是点  也可能是索引
@@ -211,7 +210,7 @@ export function linkSides(options: ILinkSideOptions): IGeometry {
             allVertics.push(startHoles)
         }
 
-        var startTris = triangulation(orgShape, orgHoles, { feature: AxisPlane.XYZ });
+        var startTris: any = triangulation(orgShape, orgHoles, { feature: AxisPlane.XYZ });
         if (index) {
             startTris.forEach((v: number, i: number) => {
                 startTris[i] = v + index?.index;
@@ -234,7 +233,7 @@ export function linkSides(options: ILinkSideOptions): IGeometry {
             var endHoles = clone(clone(holess[holess.length - 1]));
             allVertics.push(endHoles)
         }
-        var endTris = triangulation(orgShape, orgHoles, { feature: AxisPlane.XYZ });
+        var endTris: any = triangulation(orgShape, orgHoles, { feature: AxisPlane.XYZ });
         if (index) {
             endTris.forEach((v: number, i: number) => {
                 endTris[i] = v + index?.index;
@@ -629,7 +628,7 @@ export function extrude_obsolete<T extends Vec3>(shape: ArrayList<T>, arg_path: 
     }
     translate(endSeal, path.get(-1));
 
-    var sealStartTris = triangulation(sealUv, [], { normal: normal! });
+    var sealStartTris: any = triangulation(sealUv, [], { normal: normal! });
     sealStartTris.reverse();
 
     if (options.sealStart)

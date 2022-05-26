@@ -3,7 +3,9 @@ import { UUID } from '../../of/core/uuid';
 import { Undefinable } from '../../cga/utils/types';
 export class Texture extends EventHandler {
     id: any = UUID.Instanced.getID('texture_', true);
+    url: string = '';
     image?: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+
     width: number = 1;
     height: number = 1;
     depth: number = 1;
@@ -16,8 +18,19 @@ export class Texture extends EventHandler {
     wrapU: GPUAddressMode = 'repeat';
     wrapV: GPUAddressMode = 'repeat';
 
+
     constructor() {
         super();
+    }
 
+
+    loadImage(url: string) {
+        this.url = url;
+        this.image = new Image();
+        this.image.src = url;  
+    }
+
+    loadVideo(url: string) {
+        
     }
 }

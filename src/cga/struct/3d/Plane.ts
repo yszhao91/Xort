@@ -10,13 +10,10 @@ import { Vec3 } from '../../math/Vec3';
 import { approximateEqual, sign, delta4 } from "../../math/Math";
 import { Segment } from './Segment';
 import { Orientation } from '../data/type';
-import { Triangle } from './Triangle';
-import { IGeometry } from '../../render/geometry';
+import { Triangle } from './Triangle'; 
 import { ISplitResult } from '../../alg/split';
 import { Line } from './Line';
-import { Polyline } from './Polyline';
-import { Path } from './Path';
-import { indexable } from '../../render/mesh';
+import { indexable, IGeometry } from '../data/geometry';
 
 class Plane {
 

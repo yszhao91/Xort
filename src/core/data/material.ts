@@ -12,6 +12,7 @@ export class MaterialData {
 
     transparent: boolean = false;
     opacity: number = 1;
+    
 
     constructor() {
 

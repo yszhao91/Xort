@@ -14,9 +14,7 @@ export * from "./math/vector"
 export * from "./alg/common"
 export * from "./alg/result"
 export * from "./alg/extrude"
-export * from "./alg/delaunay"
-
-export * from "./render/mesh"
+export * from "./alg/delaunay" 
 
 export * from "./struct/2d/Box2"
 
@@ -36,11 +34,5 @@ export * from "./struct/3d/Triangle"
 export * from "./struct/3d/Frustum"
 
 export * from "./alg/delaunator"
-export * from "./alg/voronoi"
-
-export * from "./extends/geometryaid"
-
-//Geometry 
-export * from "./render/buffer-attribute"
-export * from "./render/geometry"
-export * from "./render/mesh"
+export * from "./alg/voronoi" 
+ 
