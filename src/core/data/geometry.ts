@@ -286,6 +286,7 @@ export class GeometryData {
 
         }
 
+        return geometry;
     }
 
 

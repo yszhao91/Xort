@@ -4,12 +4,12 @@ import { XortEntity } from "../entity";
 import { RADIANS_PER_DEGREE } from '../../cga/math/Math';
 
 enum CameraType {
-    Perspection = 0,
-    Origition = 1
+    Perspective = 0,
+    Orthographic = 1
 }
 
 class CameraData {
-    type: CameraType = CameraType.Perspection
+    type: CameraType = CameraType.Perspective;
     fov: number = 45;
     near: number = 0.1;
     far: number = 1000;
@@ -27,11 +27,14 @@ class CameraData {
 export class CameraComponent extends Component<any> {
     declare _asset: CameraData;
     declare entity: XortEntity;
+    modelViewMat: Mat4 = new Mat4();
     _projectionMat: Mat4 = new Mat4();
-    _projectionMatInverse: Mat4 = new Mat4(); 
+    _projectionMatInverse: Mat4 = new Mat4();
+    normalMatrix: Mat4 = new Mat4();
     constructor() {
         super();
         this.descriptors = [{ name: 'asset' }];
+        this._asset = new CameraData();
 
         this.on('addToEntity', (entity: XortEntity) => {
             entity._compileCache.camera = this;
@@ -46,14 +49,15 @@ export class CameraComponent extends Component<any> {
         if (!this.needsUpdate)
             return;
 
-        this.entity.transfrom;
+        const transfrom = this.entity.transfrom;
+
         this.needsUpdate = true;
 
         this._projectionMatInverse.copy(this._projectionMat).invert();
 
-        // object.modelViewMat.multiplyMats(camera._matWorldInverse, object.matrixWorld);
-        // object.normalMatrix.getNormalMatrix(object.modelViewMatrix); 
-        
+        this.modelViewMat.multiplyMats(transfrom._matWorldInverse, transfrom._matWorld);
+        // this.normalMatrix.getNormalMatrix(transfrom.modelViewMatrix);
+
         // 视图矩阵 = 相机的模型矩阵的逆
         // 法线矩阵 =  模型视图矩阵的逆
     }

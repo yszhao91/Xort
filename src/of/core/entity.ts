@@ -33,7 +33,6 @@ export abstract class Entity extends Thing implements IRunEvent {
     private _object: any;
 
     _compileCache: any = {};
-    xort!: Xort;
     //是否需要更新  
 
     constructor(options: IEntityOptions = {}) {
@@ -138,8 +137,6 @@ export abstract class Entity extends Thing implements IRunEvent {
             }
             (com as Component<any>).fire('addToEntity', this);
 
-            if (this.xort)
-                this.xort.fire('onAddComponent', com);
             return true;
         } else {
             return false;
@@ -169,8 +166,6 @@ export abstract class Entity extends Thing implements IRunEvent {
             removeObj = this._components.splice(i, 1)[0];
             (com as Component<any>).fire('removeToEntity', this);
         }
-        if (this.xort)
-            this.xort.fire('onRemoveComponent', removeObj);
         return removeObj;
     }
 

@@ -97,8 +97,7 @@ export class MetaVision extends EventHandler {
     render() {
         const pipelineManager = this.xort.renderpipelineManager;
         this.commadnEncoder = this.device.createCommandEncoder()
-        const scene = this.xort.scene;
-
+        const scene = this.xort.scene; 
         scene.opaque
         const textureView = this.context.getCurrentTexture().createView();
         this.renderPass = this.commadnEncoder.beginRenderPass({

@@ -1,6 +1,7 @@
 import { BaseManager } from './baseManager';
 import { Xort } from '../xort';
 import { XortEntity } from '../entity';
+import { MaterialData } from '../data/material';
 export class RenderPipelineMananger extends BaseManager {
     constructor(xort: Xort) {
         super(xort)
@@ -12,17 +13,17 @@ export class RenderPipelineMananger extends BaseManager {
         const cache = this.get(entity);
         let currentPipeline;
         if (this._needsUpdate(entity, cache)) {
-            const material = entity.material;
+            const material: MaterialData = entity.material!._asset;
 
             const vertexStage: GPUVertexState = {
                 module: device.createShaderModule({
                     code: material.vertexShaderCode,
                 }),
-                entryPoint: material.vertexEntryPoint || 'main',
+                entryPoint: material.vertexEntryPoint,
             }
             const fragmentStage: GPUFragmentState = {
                 module: device.createShaderModule({ code: material.fragmentShaderCode }),
-                entryPoint: material.fragmentEntryPoint || 'main',
+                entryPoint: material.fragmentEntryPoint,
                 targets: []
             }
 
@@ -39,9 +40,11 @@ export class RenderPipelineMananger extends BaseManager {
 
 
     create(stageVertex: GPUVertexState, stageFragment: GPUFragmentState, entity: XortEntity) {
-        const material = entity.material;
-        const geometry = entity.geometry;
+        const material = entity.material?._asset;
+        const geometry = entity.geometry?._asset;
         const sampleCount = this.xort.sampleCount;
+
+        const device = this.xort._vision.device;
 
         let cachePipeline = this.get(entity);
         if (cachePipeline === undefined) {

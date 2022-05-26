@@ -1,3 +1,5 @@
+import { Texture } from './texture';
+import { Undefinable } from '../../of/utils/types';
 const baseVertexCode: string = `main(){}`
 const fragmentVertexCode: string = `
 fn main() vec4<f32>{
@@ -12,7 +14,10 @@ export class MaterialData {
 
     transparent: boolean = false;
     opacity: number = 1;
-    
+
+    map: Undefinable<Texture>;
+    vertexEntryPoint: string = 'main';
+    fragmentEntryPoint: string = 'main';
 
     constructor() {
 
