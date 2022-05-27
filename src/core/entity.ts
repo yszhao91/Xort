@@ -46,7 +46,7 @@ export class XortEntity extends MetaEntity {
 
     //API   
     nextStep(xort: Xort) {
-        xort.fire('nextStepEntity', this);
+        xort.fire('nextStepEntity', this); 
         super.nextStep(xort);
     }
 

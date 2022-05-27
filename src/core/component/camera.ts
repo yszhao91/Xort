@@ -28,9 +28,9 @@ export class CameraComponent extends Component<any> {
     declare _asset: CameraData;
     declare entity: XortEntity;
     modelViewMat: Mat4 = new Mat4();
-    _projectionMat: Mat4 = new Mat4();
-    _projectionMatInverse: Mat4 = new Mat4();
-    normalMatrix: Mat4 = new Mat4();
+    projectionMat: Mat4 = new Mat4();
+    projectionMatInverse: Mat4 = new Mat4();
+
     constructor() {
         super();
         this.descriptors = [{ name: 'asset' }];
@@ -39,6 +39,7 @@ export class CameraComponent extends Component<any> {
         this.on('addToEntity', (entity: XortEntity) => {
             entity._compileCache.camera = this;
         });
+
     }
 
     onChange(_descriptor?: IDescriptor, _value?: any): void {
@@ -46,17 +47,16 @@ export class CameraComponent extends Component<any> {
     }
 
     nextStep(_entity?: XortEntity): void {
-        if (!this.needsUpdate)
-            return;
+
+        this._updateProjectionMatrix();
 
         const transfrom = this.entity.transfrom;
 
-        this.needsUpdate = true;
-
-        this._projectionMatInverse.copy(this._projectionMat).invert();
+        this.projectionMatInverse.copy(this.projectionMat).invert();
 
         this.modelViewMat.multiplyMats(transfrom._matWorldInverse, transfrom._matWorld);
-        // this.normalMatrix.getNormalMatrix(transfrom.modelViewMatrix);
+
+        this.entity.transfrom._matWorldInverse.copy(this.entity.transfrom._matWorld).invert();
 
         // 视图矩阵 = 相机的模型矩阵的逆
         // 法线矩阵 =  模型视图矩阵的逆
@@ -80,8 +80,8 @@ export class CameraComponent extends Component<any> {
         //     height *= view.height / fullHeight;
         // }
 
-        this._projectionMat.makePerspective(left, left + width, top, top - height, near, d.far);
-        this._projectionMatInverse.copy(this._projectionMat).invert();
+        this.projectionMat.makePerspective(left, left + width, top, top - height, near, d.far);
+        this.projectionMatInverse.copy(this.projectionMat).invert();
     }
 
 

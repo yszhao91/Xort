@@ -17,6 +17,15 @@ export const isBufferArray = (obj: any) => {
     return types.indexOf(obj.constructor.name) > -1;
 }
 
+export const locationDic: IStringDictionary<number> = {
+    position: 0,
+    normal: 1,
+    uv: 2,
+    color: 3,
+    uv2: 4,
+    tangent: 5,
+}
+
 export class BufferAttribute {
     name: string = '';
     array: TypedArray;
@@ -31,13 +40,19 @@ export class BufferAttribute {
     isInstance: boolean = false;
     instanceCount: number = 1;
     readonly isBufferAttribute: boolean = true;
-    constructor(array: TypedArray, stride: number, normalized: boolean = false) {
+    offset: number = 0;
+    location: number = -1;
+    format: GPUVertexFormat = 'float32';
+
+    constructor(array: TypedArray, stride: number, name: string = '', normalized: boolean = false) {
         this.array = array;
         this.stride = stride;
         this.updateRange = { offset: 0, count: -1 };
         this.count = array !== undefined ? array.length / stride : 0;
         this.normalized = normalized;
+        this.name = name;
         this.version = 0;
+        this.location = locationDic[name] !== undefined ? locationDic[name] : -1; 
     }
 
     set needsUpdate(value: boolean) {
@@ -61,49 +76,52 @@ export class GeometryData {
         }
     userData: any;
 
-    _index?: BufferAttribute;
-    _attributes: IStringDictionary<BufferAttribute> = {}
+    index?: BufferAttribute;
+    indexFormat: GPUIndexFormat = 'uint32';
+    attributes: IStringDictionary<BufferAttribute> = {}
 
     constructor() {
     }
 
     setData(name: string, data: Array<number>, stride: number = 3, arrayType: any = Float32Array) {
         (this.data as any)[name] = data;
-        const attribute = new BufferAttribute(new arrayType(data), stride);
-        this._attributes[name] = attribute
+        const attribute = new BufferAttribute(new arrayType(data), stride, name);
+        this.attributes[name] = attribute
     }
 
 
     setIndex(index: BufferAttribute | TypedArray | number[]) {
         if (index instanceof BufferAttribute) {
-            this._index = index;
+            this.index = index;
         } else if (Array.isArray(index)) {
-            this._index = Vec.max(index as any) > 65535 ?
+            this.index = Vec.max(index as any) > 65535 ?
                 new BufferAttribute(new Uint32Array(index), 1) :
                 new BufferAttribute(new Uint16Array(index), 1);
+            this.indexFormat = 'uint32';
         } else {
-            this._index = Vec.max(index as any) > 65535 ?
+            this.index = Vec.max(index as any) > 65535 ?
                 new BufferAttribute(index, 1) :
                 new BufferAttribute(index, 1);
+            this.indexFormat = 'uint16';
         }
     }
 
     getIndex() {
-        return this._index;
+        return this.index;
     }
 
     setAttribute(name: string, attribute: BufferAttribute | TypedArray | number[], stride: number = 3, clazz?: any) {
         if ((attribute as BufferAttribute).isBufferAttribute)
-            this._attributes[name] = attribute as BufferAttribute;
+            this.attributes[name] = attribute as BufferAttribute;
         else if (Array.isArray(attribute)) {
-            this._attributes[name] = new BufferAttribute(new clazz(attribute), stride);
+            this.attributes[name] = new BufferAttribute(new clazz(attribute), stride, name);
         } else
-            this._attributes[name] = new BufferAttribute(attribute as TypedArray, stride);
+            this.attributes[name] = new BufferAttribute(attribute as TypedArray, stride, name);
     }
 
     getAttribute(name: string) {
-        if (this._attributes[name])
-            return this._attributes[name];
+        if (this.attributes[name])
+            return this.attributes[name];
         else {
             throw ('不存在buffer' + name)
         }

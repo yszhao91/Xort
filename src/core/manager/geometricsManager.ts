@@ -9,7 +9,7 @@ export class GeometricsMananger extends BaseManager {
 
 
     get(attribute: BufferAttribute) {
-        this.update(attribute,attribute.name==='index')
+        this.update(attribute, attribute.name === 'index')
         return this._map.get(attribute);
     }
 
@@ -55,7 +55,7 @@ export class GeometricsMananger extends BaseManager {
         const array = geometry.array;
         const device = this.xort._vision.device;
         const buffer = device.createBuffer({
-            size: 0,
+            size: array.byteLength,
             usage: (usage as any) || GPUBufferUsage.COPY_DST,
             mappedAtCreation: true
         });

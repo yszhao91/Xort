@@ -2,32 +2,18 @@ import { BaseManager } from './baseManager';
 import { Xort } from '../xort';
 import { XortEntity } from '../entity';
 import { MaterialData } from '../data/material';
+import { GeometryData } from '../data/geometry';
 export class RenderPipelineMananger extends BaseManager {
     constructor(xort: Xort) {
         super(xort)
     }
 
-    acquire(entity: XortEntity): GPURenderPipeline {
-        const device = this.xort._vision.device;
-
+    acquire(entity: XortEntity): GPURenderPipeline { 
         const cache = this.get(entity);
         let currentPipeline;
         if (this._needsUpdate(entity, cache)) {
-            const material: MaterialData = entity.material!._asset;
-
-            const vertexStage: GPUVertexState = {
-                module: device.createShaderModule({
-                    code: material.vertexShaderCode,
-                }),
-                entryPoint: material.vertexEntryPoint,
-            }
-            const fragmentStage: GPUFragmentState = {
-                module: device.createShaderModule({ code: material.fragmentShaderCode }),
-                entryPoint: material.fragmentEntryPoint,
-                targets: []
-            }
-
-            currentPipeline = this.create(vertexStage, fragmentStage, entity)
+            currentPipeline = this.create(entity)
+            this.add(entity, currentPipeline);
         } else {
             currentPipeline = cache;
         }
@@ -39,9 +25,9 @@ export class RenderPipelineMananger extends BaseManager {
     }
 
 
-    create(stageVertex: GPUVertexState, stageFragment: GPUFragmentState, entity: XortEntity) {
-        const material = entity.material?._asset;
-        const geometry = entity.geometry?._asset;
+    create(entity: XortEntity) {
+        const material: MaterialData = entity.material?._asset as any;
+        const geometry: GeometryData = entity.geometry?._asset as any;
         const sampleCount = this.xort.sampleCount;
 
         const device = this.xort._vision.device;
@@ -53,32 +39,51 @@ export class RenderPipelineMananger extends BaseManager {
                 const attribute = geometry.getAttribute(name);
                 if (!attribute)
                     continue;
-                const stepMode = attribute.isInstanced ? 'instance' : 'vertex';
+                const stepMode = attribute.isInstance ? 'instance' : 'vertex';
 
                 vertexBuffers.push({
-                    arrayStride: attribute.arrayStride,
-                    attributes: [{ shaderLocation: attribute.slot, offset: attribute.offset, format: attribute.format }],
+                    arrayStride: attribute.stride,
+                    attributes: [{ shaderLocation: attribute.location, offset: attribute.offset, format: attribute.format }],
                     stepMode: stepMode
                 });
             }
 
-            const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
-                vertex: Object.assign({}, stageVertex, { buffers: vertexBuffers }),
-
-                fragment: Object.assign({}, stageFragment, {
-                    targets: [{
-                        format: material.colorFormat,
-                        blend: {
-                            alpha: material.alphaBlend,
-                            color: material.colorBlend
-                        },
-                        writeMask: material.colorWriteMask
-                    }]
+            const stageVertex: GPUVertexState = {
+                module: device.createShaderModule({
+                    code: material.vertexShaderCode,
                 }),
-                primitive: {},
+                buffers: vertexBuffers,
+                entryPoint: material.vertexEntryPoint,
+            }
+
+            const stageFragment: GPUFragmentState = {
+                module: device.createShaderModule({ code: material.fragmentShaderCode }),
+                entryPoint: material.fragmentEntryPoint,
+                targets: [{
+                    format: material.colorFormat,
+                    blend: {
+                        alpha: material.alphaBlend,
+                        color: material.colorBlend
+                    },
+                    writeMask: material.colorWriteMask
+                }]
+            } 
+
+            const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
+                vertex: stageVertex,
+                fragment: stageFragment,
+                primitive: {
+                    topology: material.topology,
+                    frontFace: material.frontFace,
+                    cullMode: material.cullMode,
+                    // stripIndexFormat
+                },
                 multisample: {
                     count: sampleCount
-                }
+                },
+                depthStencil: undefined,
+                label: undefined,
+                layout: undefined,
             })
             this.add(entity, renderPipeline)
             cachePipeline = renderPipeline;

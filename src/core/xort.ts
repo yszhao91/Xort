@@ -8,6 +8,7 @@ import { AttributeManager } from './manager/attributeManager';
 import { Statistics } from "./statistics";
 import { RenderStatesManager } from "./manager/renderStatesManager";
 import { RenderPipelineMananger } from "./manager/renderpipleManager";
+import { BindGroupManager } from "./manager/bindGroupManager";
 
 
 export class Xort extends EventHandler {
@@ -21,6 +22,7 @@ export class Xort extends EventHandler {
     geometricManager: GeometricsMananger;
     attributeManager: AttributeManager;
     renderpipelineManager: RenderPipelineMananger;
+    bindGroupManager: BindGroupManager;
     renderStateManager: RenderStatesManager;
     statistics: Statistics;
     sampleCount: number = 1;
@@ -41,6 +43,7 @@ export class Xort extends EventHandler {
         this.attributeManager = new AttributeManager(this);
         this.renderpipelineManager = new RenderPipelineMananger(this);
         this.renderStateManager = new RenderStatesManager(this);
+        this.bindGroupManager = new BindGroupManager(this);
 
         this.defaultLoop = this.loop.bind(this)
     }
@@ -59,9 +62,9 @@ export class Xort extends EventHandler {
             this.defaultLoop()
     }
 
-    preHandle() { 
+    preHandle() {
         this.scene.nextStep(this);
- 
+
         this._currentRenderState = this.renderStateManager.get(this.scene);
         this._currentRenderState.init();
 

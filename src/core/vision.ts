@@ -96,8 +96,9 @@ export class MetaVision extends EventHandler {
 
     render() {
         const pipelineManager = this.xort.renderpipelineManager;
+        const bindGroupManager = this.xort.bindGroupManager;
         this.commadnEncoder = this.device.createCommandEncoder()
-        const scene = this.xort.scene; 
+        const scene = this.xort.scene;
         scene.opaque
         const textureView = this.context.getCurrentTexture().createView();
         this.renderPass = this.commadnEncoder.beginRenderPass({
@@ -121,24 +122,25 @@ export class MetaVision extends EventHandler {
         for (let i = 0, len = scene.opaque.length; i < len; i++) {
             const opaqueObject = scene.opaque[i];
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
-            const geometry = opaqueObject.geometry;
+            const geometry = opaqueObject.geometry?._asset!;
+            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject)
 
             for (const key in geometry.attributes) {
                 const attribute = geometry.attributes[key];
-                this.xort.geometricManager.get(attribute);
-                this.renderPass.setVertexBuffer(attribute.slot, attribute);
+                const gpuAttr: { buffer: GPUBuffer } = this.xort.geometricManager.get(attribute);
+                this.renderPass.setVertexBuffer(attribute.location, gpuAttr.buffer);
             }
             if (geometry.index) {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
-                this.renderPass.setIndexBuffer(bufferData.buffer, 'uint32')
+                this.renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
             }
 
             this.renderPass.setPipeline(pipeline)
-            this.renderPass.setBindGroup(0, group);
+            this.renderPass.setBindGroup(0, bindGroup);
             if (geometry.index)
-                this.renderPass.drawIndexed(geometry.index.length);
+                this.renderPass.drawIndexed(geometry.index.count);
             else
-                this.renderPass.draw(geometry.position.length);
+                this.renderPass.draw(geometry.getAttribute('position').count);
         }
 
 
@@ -146,15 +148,4 @@ export class MetaVision extends EventHandler {
         this.device.queue.submit([this.commadnEncoder.finish()]);
     }
 
-
-    private _setupIndex(buffer: any, renderPass: GPURenderPassEncoder) {
-        const indexFormat: GPUIndexFormat = (buffer instanceof Uint16Array) ? 'uint16' : 'uint32';
-        renderPass.setIndexBuffer(buffer, indexFormat);
-    }
-
-    private _setupVertex(renderPass: GPURenderPassEncoder, renderPipeline: GPURenderPipeline) {
-        const shaderAttributes = renderPipeline;
-
-
-    }
 }

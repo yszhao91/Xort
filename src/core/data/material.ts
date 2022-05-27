@@ -18,7 +18,19 @@ export class MaterialData {
     map: Undefinable<Texture>;
     vertexEntryPoint: string = 'main';
     fragmentEntryPoint: string = 'main';
-
+    colorFormat: GPUTextureFormat = 'rgba8unorm';
+    alphaBlend: GPUBlendComponent = {};
+    // {
+    //     operation: 'add',
+    //     srcFactor: 'one',
+    //     dstFactor: 'one-minus-src'
+    // };
+    colorBlend: GPUBlendComponent = {};
+    colorWriteMask: GPUColorWriteFlags = 0;
+    topology: GPUPrimitiveTopology = 'triangle-list';
+    frontFace: GPUFrontFace = 'ccw';
+    cullMode: GPUCullMode = 'back';
+ 
     constructor() {
 
     }

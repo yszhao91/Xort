@@ -23,11 +23,15 @@ export class XortScene extends XortEntity {
             if ((entity as any).isXortScene)
                 return;
             if (entity.material) {
-                if ( entity.material  ._asset.transparent)
+                if (entity.material._asset.transparent)
                     this.transparent.push(entity);
                 else
                     this.opaque.push(entity);
             }
+
+
+            this.transfrom._modelViewMat.multiplyMats(this.camera.transfrom._matWorldInverse, this.transfrom._matWorld);
+            this.transfrom._normalMat.getNormalMat(this.transfrom._modelViewMat);
         });
 
         this._camera = new XortEntity(xort);
