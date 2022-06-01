@@ -31,7 +31,7 @@ export class CameraComponent extends Component<any> {
     projectionMat: Mat4 = new Mat4();
     projectionMatInverse: Mat4 = new Mat4();
 
-    constructor() {
+    constructor() { 
         super();
         this.descriptors = [{ name: 'asset' }];
         this._asset = new CameraData();

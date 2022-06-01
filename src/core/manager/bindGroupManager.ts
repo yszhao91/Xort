@@ -2,6 +2,38 @@ import { MaterialData } from '../data/material';
 import { XortEntity } from '../entity';
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
+
+export const DataType = {
+    float: 'f32',
+    int: 'i32',
+    uint: 'u32',
+    bool: 'bool',
+
+    vec2: 'vec2<f32>',
+    ivec2: 'vec2<i32>',
+    uvec2: 'vec2<u32>',
+    bvec2: 'vec2<bool>',
+
+    vec3: 'vec3<f32>',
+    ivec3: 'vec3<i32>',
+    uvec3: 'vec3<u32>',
+    bvec3: 'vec3<bool>',
+
+    vec4: 'vec4<f32>',
+    ivec4: 'vec4<i32>',
+    uvec4: 'vec4<u32>',
+    bvec4: 'vec4<bool>',
+
+    mat3: 'mat3x3<f32>',
+    imat3: 'mat3x3<i32>',
+    umat3: 'mat3x3<u32>',
+    bmat3: 'mat3x3<bool>',
+
+    mat4: 'mat4x4<f32>',
+    imat4: 'mat4x4<i32>',
+    umat4: 'mat4x4<u32>',
+    bmat4: 'mat4x4<bool>'
+}
 export class BindGroupManager extends BaseManager {
 
     constructor(xort: Xort) {
@@ -15,6 +47,10 @@ export class BindGroupManager extends BaseManager {
         if (this._needsUpdate(entity, cache)) {
             currentBindGroup = this.create(entity);
             this.add(entity, currentBindGroup);
+
+            const pipeline: GPURenderPipeline = this.xort.renderpipelineManager.acquire(entity);
+            const bindLayout = pipeline.getBindGroupLayout(0);
+
         } else {
             currentBindGroup = cache;
         }
@@ -73,6 +109,6 @@ export class BindGroupManager extends BaseManager {
     }
 
     private _createTransfrom() {
-        
+
     }
 }

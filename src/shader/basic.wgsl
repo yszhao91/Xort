@@ -1,25 +1,29 @@
 
-struct TransfromUniform {   
-    view_projection_mat: mat4x4<f32>;
-    model_mat: mat4x4<f32>;                  
-    view_mat: mat4x4<f32>;                        
-    normal_mat: mat3x3<f32>;   
-    projection_mat: mat4x4<f32>;    
-};
+struct TransfromUniform {     
+    modelMatrix: mat4x4<f32>;
+    modelViewMatrix: mat4x4<f32>;
+    projectionMatrix: mat4x4<f32>;
+    viewMatrix: mat4x4<f32>;
+    normalMatrix: mat3x3<f32>;
+    cameraPosition: vec3<f32>;
+    isOrthographic: bool;
+}
  
 struct DisplacementMap {
     map: texture_2d<f32>;
     scale: vec2<f32>;
 }
 
- @group(0) @binding(0)
- var<uniform> uniforms : TransfromUniform;
+@group(0) @binding(0)
+var<uniform> uniforms : TransfromUniform;
 
-struct Input {
+struct GeometryInput {
     @location(0) position: vec3<f32>;
-    @location(1) normal: vec4<f32>;
+    @location(1) normal: vec3<f32>;
     @location(2) color: vec3<f32>;
-    @location(3) uv: vec3<f32>;
+    @location(3) uv: vec2<f32>;
+    @location(1) tabgent: vec3<f32>;
+    @location(3) uv2: vec2<f32>;
 };
 
  
