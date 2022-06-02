@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "rlx": "tsc && npm publish",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build",
     "serve": "vite preview"
   },
@@ -15,7 +15,7 @@
     "webgpu",
     "web3d"
   ],
-  "author": "赵耀圣",
+  "author": "yszhao91",
   "license": "盈利50万RMB以上支付5%",
   "repository": {
     "type": "git",
