@@ -2,6 +2,8 @@ import { MaterialData } from '../data/material';
 import { XortEntity } from '../entity';
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
+import { TransformComponent } from '../../of/extends/component/transform';
+import { CameraComponent } from '../component/camera';
 
 export const DataType = {
     float: 'f32',
@@ -33,7 +35,8 @@ export const DataType = {
     imat4: 'mat4x4<i32>',
     umat4: 'mat4x4<u32>',
     bmat4: 'mat4x4<bool>'
-}
+} 
+
 export class BindGroupManager extends BaseManager {
 
     constructor(xort: Xort) {
@@ -41,15 +44,33 @@ export class BindGroupManager extends BaseManager {
 
     }
 
+    setupData(device: GPUDevice, buffer: GPUBuffer, camera: CameraComponent, transfrom: TransformComponent) {
+        /** 
+         * struct TransformUniform {     
+         *     modelMatrix: mat4x4<f32>;
+         *     modelViewMatrix: mat4x4<f32>;
+         *     projectionMatrix: mat4x4<f32>;
+         *     viewMatrix: mat4x4<f32>;
+         *     normalMatrix: mat3x3<f32>;
+         *     cameraPosition: vec3<f32>;
+         * }
+         */
+        transfrom._matWorld.elements;
+        const data = new Float32Array();
+        data.set(transfrom._matWorld.elements, 0);
+        data.set(transfrom._modelViewMat.elements, 16);
+        data.set(camera.projectionMat.elements, 32)
+        data.set(camera.modelViewMat.elements, 32)
+        device.queue.writeBuffer(buffer, 0, data);
+    }
+
     acquire(entity: XortEntity): GPUBindGroup {
         const cache = this.get(entity);
         let currentBindGroup;
         if (this._needsUpdate(entity, cache)) {
-            currentBindGroup = this.create(entity);
-            this.add(entity, currentBindGroup);
-
             const pipeline: GPURenderPipeline = this.xort.renderpipelineManager.acquire(entity);
-            const bindLayout = pipeline.getBindGroupLayout(0);
+            currentBindGroup = this.create(entity, pipeline);
+            this.add(entity, currentBindGroup);
 
         } else {
             currentBindGroup = cache;
@@ -63,7 +84,7 @@ export class BindGroupManager extends BaseManager {
     }
 
 
-    create(entity: XortEntity) {
+    create(entity: XortEntity, pipeline: GPURenderPipeline) {
         const material: MaterialData = entity.material?._asset as any;
         const device = this.xort._vision.device;
 
@@ -72,43 +93,44 @@ export class BindGroupManager extends BaseManager {
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
             mappedAtCreation: true
         })
-        const bindGroupLayout = device.createBindGroupLayout({
-            entries: [
-                {
-                    binding: 0,//transfrom uniform
-                    visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
-                    buffer: {}
-                }, {
-                    binding: 1,
-                    visibility: GPUShaderStage.FRAGMENT,
-                    texture: {}
-                }, {
-                    binding: 2,
-                    visibility: GPUShaderStage.FRAGMENT,
-                    sampler: {}
-                }
-            ]
-        })
-        const unifromGroup = device.createBindGroup({
-            layout: bindGroupLayout,
-            entries: [{
-                binding: 0,
-                resource: { buffer: buffer },
-            }, {
-                binding: 1,
-                resource: texture
-            }, {
-                binding: 2,
-                resource: sampler
-            }]
-        });
 
-        const pipelineLayout = device.createPipelineLayout({
-            bindGroupLayouts: [bindGroupLayout]
-        });
+        const entries: GPUBindGroupEntry[] = [];
+        entries.push(this._createTransfromBuffer());
+
+
+        const bindGroupLayout = device.createBindGroup({
+            layout: pipeline.getBindGroupLayout(0),
+            entries: entries
+        })
+
+        return bindGroupLayout;
     }
 
-    private _createTransfrom() {
 
+    private _createTransfromBuffer(): GPUBindGroupEntry {
+        /**
+         * 
+         * struct TransformUniform {     
+         *     modelMatrix: mat4x4<f32>;
+         *     modelViewMatrix: mat4x4<f32>;
+         *     projectionMatrix: mat4x4<f32>;
+         *     viewMatrix: mat4x4<f32>;
+         *     normalMatrix: mat3x3<f32>;
+         *     cameraPosition: vec3<f32>;
+         * }
+         */
+        const size = 16 * 4 * 4 + 9 * 4 + 3 * 4;
+        const transfromUniformBuffer: GPUBuffer = device.createBuffer({
+            size,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+        return {
+            binding: 0,
+            resource: {
+                buffer: transfromUniformBuffer,
+                offset: 0,
+                size: size
+            }
+        }
     }
 }

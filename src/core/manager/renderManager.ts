@@ -29,8 +29,8 @@ export class RenderObjectMananger extends BaseManager {
 
     load(scene: XortScene): any {
         this.leveltraverse(scene as unknown as XortEntity);
-        this.opaque = this.items.filter(v => v.material.transparent);
-        this.transparent = this.items.filter(v => !v.material.transparent);
+        this.opaque = this.items.filter((v: any) => v.material.transparent);
+        this.transparent = this.items.filter((v: any) => !v.material.transparent);
     }
 
     dispose() {

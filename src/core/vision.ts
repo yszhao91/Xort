@@ -123,7 +123,7 @@ export class MetaVision extends EventHandler {
             const opaqueObject = scene.opaque[i];
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
             const geometry = opaqueObject.geometry?._asset!;
-            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject)
+            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject);
 
             for (const key in geometry.attributes) {
                 const attribute = geometry.attributes[key];

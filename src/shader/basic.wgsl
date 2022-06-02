@@ -1,48 +1,96 @@
 
-struct TransfromUniform {     
+struct TransformUniform {     
     modelMatrix: mat4x4<f32>;
     modelViewMatrix: mat4x4<f32>;
     projectionMatrix: mat4x4<f32>;
     viewMatrix: mat4x4<f32>;
     normalMatrix: mat3x3<f32>;
     cameraPosition: vec3<f32>;
-    isOrthographic: bool;
+}
+
+
+struct Map {
+    map: texture_2d<f32>; 
+    samp: sampler;
+}
+
+struct AoMap {
+    map: texture_2d<f32>;
+    intensity: f32; 
+    samp: sampler;
 }
  
-struct DisplacementMap {
+
+struct LightMap {
     map: texture_2d<f32>;
-    scale: vec2<f32>;
+    intensity: f32; 
+    samp: sampler;
 }
 
-@group(0) @binding(0)
-var<uniform> uniforms : TransfromUniform;
+struct DisplacementMap {
+    map: texture_2d<f32>;
+    basic: f32;
+    scale: vec2<f32>;
+    samp: sampler;
+}
 
+struct NormalMap {
+    map: texture_2d<f32>;
+    scale: vec2<f32>; 
+    samp: sampler;
+}
+
+struct RoughnessMap {
+    map: texture_2d<f32>; 
+    samp: sampler;
+}
+
+struct MetalnessMap {
+    map: texture_2d<f32>; 
+    samp: sampler;
+}
+struct AlphaMap {
+    map: texture_2d<f32>; 
+    samp: sampler;
+}
+struct EnvMap {
+    map: texture_2d<f32>;
+    intensity: f32; 
+    samp: sampler;
+}
+  
 struct GeometryInput {
     @location(0) position: vec3<f32>;
     @location(1) normal: vec3<f32>;
-    @location(2) color: vec3<f32>;
-    @location(3) uv: vec2<f32>;
-    @location(1) tabgent: vec3<f32>;
-    @location(3) uv2: vec2<f32>;
+    @location(2) uv: vec2<f32>;
+    @location(3) color: vec3<f32>;
+    @location(4) uv2: vec2<f32>;
+    @location(5) tabgent: vec3<f32>;
 };
 
  
 struct Output {
-    @builtin(position) position: vec4<f32>;
-    @location(0) v_position: vec4<f32>;
-    @location(1) v_normal: vec4<f32>;
-    @location(2) v_color: vec2<f32>;
-    @location(3) v_uv: vec2<f32>;
+    @builtin(position) v_position: vec4<f32>; 
+    @location(0) v_normal: vec3<f32>;
+    @location(1) v_color: vec4<f32>;
+    @location(2) v_uv: vec2<f32>;
+    @location(3) isPerspective: bool; 
 };
 
+fn isPerspectiveMatrix(m: mat4x4<f32>) {
+    return m[ 2 ][ 3 ] == - 1.0;
+}
+
+@binding(0) @group(0) var<uniform> transform:TransformUniform; 
+
 @stage(vertex)
-fn vs_main(in: Input) -> Output {
-    var output: Output;
-    let m_position:vec4<f32> = uniforms.model_mat * vec4<f32>(in.position, 1.0);
-    output.v_position = m_position;
-    output.v_normal = uniforms.normal_mat * in.normal;
-    output.position = uniforms.view_projection_mat * m_position;
-    output.v_color = in.color;
+fn vs_main(in: GeometryInput) -> Output {
+    var output:Output;
+    output.v_position = transform.projectionMatrix * transform.modelViewMatrix * vec3(in.position, 1.0);
+    output.v_normal = transform.normalMatrix * in.normal;
+    output.v_uv = in.uv;
+    output.isPerspective = isPerspectiveMatrix(transform.projectionMatrix);
+    output.v_color = vec4<f32>(1.0);
     return output;
 }
 
@@ -54,6 +102,18 @@ struct PointLight {
     color: vec3<f32>;
     decay: f32;
 }
+
+struct SpotLight {
+    position: vec3<f32>;
+    color: vec3<f32>;
+    decay: f32;
+}
+
+
+struct DirectionalLight {
+	  direction: vec3<f32>;
+	  color: vec3<f32>;
+};
 
 struct IncidentLight {
     color: vec3<f32>;
@@ -67,37 +127,4 @@ struct ReflectedLight {
 	indirectDiffuse: vec3<f32>;
 	indirectSpecular: vec3<f32>;
 };
-
-struct DirectionalLight {
-	  direction: vec3<f32>;
-	  color: vec3<f32>;
-};
-@group(0)
- var DirectionalLight directionalLights[ ${} ];
-
-// fn getDirectionalLightInfo( const input DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight light ) {
-// 	light.color = directionalLight.color;
-// 	light.direction = directionalLight.direction;
-// 	light.visible = true; 
-// }
-
-struct FragUniforms {
-    light_position: vec4<f32>; 
-    eye_position: vec4<f32>;
-};
-@binding(1) @group(0) var<uniform> frag_uniforms : FragUniforms; 
-@binding(2) @group(0) var mapSampler : sampler;
-@binding(3) @group(0) var mapData : texture_2d<f32>;
-struct LightUniforms {
-    specular_color: vec4<f32>,
-    params: vec4<f32>;// ambient_intensity, diffuse_intensity, specular_intensity, specular_shininess
-    param2: vec4<f32>;// is _two_side
-};
-@binding(2) @group(0) var<uniform> light_uniforms : LightUniforms;
-
-@stage(fragment)
-fn fs_main(in: Output) -> @location(0) vec4<f32> {
-    let mapColor:vec4<f32> = textureSample(mapData, mapSampler, in.v_uv);
-    let finalColor:vec4<f32> = vec4(in.v_color, 1.0);
-    return vec4<f32>(finalColor.rgb, 1.0);
-}
+  
