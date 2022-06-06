@@ -53,7 +53,13 @@ export class MetaVision extends EventHandler {
         const device = await adapter.requestDevice(deviceDescriptor);
 
         const context = this._canvas.getContext('webgpu')!;
-        context.configure({ device, format: 'rgba8unorm' /* TODO */ });
+        // context.configure({ device, format: 'rgba8unorm' /* TODO */ });
+        context.configure({
+            device,
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+            alphaMode: 'opaque',//'premultiplied' 
+        });
 
         this.adapter = adapter;
         this.device = device;

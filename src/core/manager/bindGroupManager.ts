@@ -35,7 +35,7 @@ export const DataType = {
     imat4: 'mat4x4<i32>',
     umat4: 'mat4x4<u32>',
     bmat4: 'mat4x4<bool>'
-} 
+}
 
 export class BindGroupManager extends BaseManager {
 
@@ -119,6 +119,8 @@ export class BindGroupManager extends BaseManager {
          *     cameraPosition: vec3<f32>;
          * }
          */
+        const device = this.xort._vision.device;
+
         const size = 16 * 4 * 4 + 9 * 4 + 3 * 4;
         const transfromUniformBuffer: GPUBuffer = device.createBuffer({
             size,

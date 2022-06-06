@@ -8,7 +8,7 @@ export class RenderPipelineMananger extends BaseManager {
         super(xort)
     }
 
-    acquire(entity: XortEntity): GPURenderPipeline { 
+    acquire(entity: XortEntity): GPURenderPipeline {
         const cache = this.get(entity);
         let currentPipeline;
         if (this._needsUpdate(entity, cache)) {
@@ -67,7 +67,7 @@ export class RenderPipelineMananger extends BaseManager {
                     },
                     writeMask: material.colorWriteMask
                 }]
-            } 
+            }
 
             const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
                 vertex: stageVertex,
@@ -81,9 +81,9 @@ export class RenderPipelineMananger extends BaseManager {
                 multisample: {
                     count: sampleCount
                 },
-                depthStencil: undefined,
-                label: undefined,
-                layout: undefined,
+                // depthStencil: undefined,
+                // label: undefined,
+                layout: 'auto' as any,
             })
             this.add(entity, renderPipeline)
             cachePipeline = renderPipeline;

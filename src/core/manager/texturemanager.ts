@@ -1,6 +1,7 @@
 import { Texture } from "../data/texture";
 import { Xort } from "../xort";
 import { BaseManager } from "./baseManager";
+import { XortEntity } from '../entity';
 
 
 
@@ -12,9 +13,17 @@ export class TextureManager extends BaseManager {
 
     }
 
+    acquire(entity: XortEntity) {
+        const cacheTexture = this.get(entity);
+        if (!cacheTexture) {
+            // this._loadTexture(entit)
+        } else {
+
+        }
+    }
 
 
-    loadTexture(texture: Texture): boolean {
+    private _loadTexture(texture: Texture): boolean {
 
         let needsUpdate = false;
         const textureCache = this.get(texture)
@@ -36,9 +45,9 @@ export class TextureManager extends BaseManager {
         };
 
 
-        if (textureGPU === undefined) { 
+        if (textureGPU === undefined) {
             textureGPU = this.device.createTexture(textureGPUDescriptor);
-            textureCache.textureGPU = textureGPU; 
+            textureCache.textureGPU = textureGPU;
             needsUpdate = true;
         }
 
