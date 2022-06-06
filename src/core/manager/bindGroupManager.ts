@@ -70,8 +70,7 @@ export class BindGroupManager extends BaseManager {
         if (this._needsUpdate(entity, cache)) {
             const pipeline: GPURenderPipeline = this.xort.renderpipelineManager.acquire(entity);
             currentBindGroup = this.create(entity, pipeline);
-            this.add(entity, currentBindGroup);
-
+            this.add(entity, currentBindGroup); 
         } else {
             currentBindGroup = cache;
         }
@@ -80,6 +79,8 @@ export class BindGroupManager extends BaseManager {
     }
 
     private _needsUpdate(_object: XortEntity, _cache: any) {
+        if (_cache)
+            return false
         return true;
     }
 
@@ -88,22 +89,16 @@ export class BindGroupManager extends BaseManager {
         const material: MaterialData = entity.material?._asset as any;
         const device = this.xort._vision.device;
 
-        device.createBuffer({
-            size: 292, //(16x4+9) x4
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-            mappedAtCreation: true
-        })
-
         const entries: GPUBindGroupEntry[] = [];
         entries.push(this._createTransfromBuffer());
-
-
-        const bindGroupLayout = device.createBindGroup({
+  
+        const bindGroup: any = device.createBindGroup({
             layout: pipeline.getBindGroupLayout(0),
             entries: entries
         })
+        bindGroup.entries = entries;
 
-        return bindGroupLayout;
+        return bindGroup;
     }
 
 
@@ -121,7 +116,7 @@ export class BindGroupManager extends BaseManager {
          */
         const device = this.xort._vision.device;
 
-        const size = 16 * 4 * 4 + 9 * 4 + 3 * 4;
+        const size = (16 * 4 + 9 + 3) * 4;
         const transfromUniformBuffer: GPUBuffer = device.createBuffer({
             size,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,

@@ -84,8 +84,7 @@ export class MetaVision extends EventHandler {
         this._canvas.style.width = width + 'px';
         this._canvas.style.height = height + 'px';
 
-        this.setViewport(0, 0, width, height);
-
+        
         this.context.configure({
             device: this.device,
             format: 'rgba8unorm',
@@ -97,6 +96,7 @@ export class MetaVision extends EventHandler {
                 depthOrArrayLayers: 1
             },
         });
+        this.setViewport(0, 0, width, height);
 
     }
 
@@ -126,13 +126,15 @@ export class MetaVision extends EventHandler {
         this.renderPass.setViewport(vp.x, vp.y, width, height, vp.minDepth, vp.maxDepth);
 
         for (let i = 0, len = scene.opaque.length; i < len; i++) {
-            const opaqueObject = scene.opaque[i];
+            const opaqueObject = scene.opaque[i]; 
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
             const geometry = opaqueObject.geometry?._asset!;
             const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject);
 
+            this.renderPass.setPipeline(pipeline);
+
             for (const key in geometry.attributes) {
-                const attribute = geometry.attributes[key];
+                const attribute = geometry.attributes[key]; 
                 const gpuAttr: { buffer: GPUBuffer } = this.xort.geometricManager.get(attribute);
                 this.renderPass.setVertexBuffer(attribute.location, gpuAttr.buffer);
             }
@@ -140,8 +142,7 @@ export class MetaVision extends EventHandler {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
                 this.renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
             }
-
-            this.renderPass.setPipeline(pipeline)
+ 
             this.renderPass.setBindGroup(0, bindGroup);
             if (geometry.index)
                 this.renderPass.drawIndexed(geometry.index.count);

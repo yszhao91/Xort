@@ -30,6 +30,6 @@ export class MaterialData {
     cullMode: GPUCullMode = 'back';
 
     constructor() {
-
+        
     }
 }

@@ -1,6 +1,7 @@
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
 import { BufferAttribute } from '../data/geometry';
+import { isUndefNull } from '../../of/utils/types';
 
 export class GeometricsMananger extends BaseManager {
     constructor(xort: Xort) {
@@ -31,7 +32,7 @@ export class GeometricsMananger extends BaseManager {
     update(attribute: BufferAttribute, isIndex: boolean = false, usage?: GPUBufferUsage) {
         let data = this._map.get(attribute);
         if (data === undefined) {
-            if (usage === null) {
+            if (isUndefNull(usage)) {
                 usage = ((isIndex === true) ? GPUBufferUsage.INDEX : GPUBufferUsage.VERTEX) as any;
             }
 
@@ -44,7 +45,7 @@ export class GeometricsMananger extends BaseManager {
             this._map.set(attribute, data);
 
         } else if (data.version < attribute.version) {
-
+            debugger
             this._writeBuffer(data.buffer, attribute);
 
             data.version = attribute.version;
@@ -55,6 +56,7 @@ export class GeometricsMananger extends BaseManager {
         const array = geometry.array;
         const device = this.xort._vision.device;
         const buffer = device.createBuffer({
+            label: geometry.name,
             size: array.byteLength,
             usage: (usage as any) || GPUBufferUsage.COPY_DST,
             mappedAtCreation: true

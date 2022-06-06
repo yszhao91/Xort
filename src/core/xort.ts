@@ -7,7 +7,7 @@ import { Timer } from '../of/core/timer';
 import { AttributeManager } from './manager/attributeManager';
 import { Statistics } from "./statistics";
 import { RenderStatesManager } from "./manager/renderStatesManager";
-import { RenderPipelineMananger } from "./manager/renderpipleManager";
+import { RenderPipelineMananger } from "./manager/renderpipeManager";
 import { BindGroupManager } from "./manager/bindGroupManager";
 
 

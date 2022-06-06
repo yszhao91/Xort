@@ -12,6 +12,29 @@ export type TypedArray =
     | Float32Array
     | Float64Array;
 
+export type BuiltinAttributeName =
+    | 'position'
+    | 'normal'
+    | 'uv'
+    | 'uv2'
+    | 'tangent'
+    | 'color'
+    | 'skinIndex'
+    | 'skinWeight'
+    | 'instanceMatrix'
+    | 'morphTarget0'
+    | 'morphTarget1'
+    | 'morphTarget2'
+    | 'morphTarget3'
+    | 'morphTarget4'
+    | 'morphTarget5'
+    | 'morphTarget6'
+    | 'morphTarget7'
+    | 'morphNormal0'
+    | 'morphNormal1'
+    | 'morphNormal2'
+    | 'morphNormal3';
+
 export const isBufferArray = (obj: any) => {
     var types = ['Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'Float32Array', 'Float64Array']
     return types.indexOf(obj.constructor.name) > -1;
@@ -47,12 +70,13 @@ export class BufferAttribute {
     constructor(array: TypedArray, stride: number, name: string = '', normalized: boolean = false) {
         this.array = array;
         this.stride = stride;
+        this.format = (stride > 1 ? 'float32x' + stride : 'float32') as GPUVertexFormat;
         this.updateRange = { offset: 0, count: -1 };
         this.count = array !== undefined ? array.length / stride : 0;
         this.normalized = normalized;
         this.name = name;
         this.version = 0;
-        this.location = locationDic[name] !== undefined ? locationDic[name] : -1; 
+        this.location = locationDic[name] !== undefined ? locationDic[name] : -1;
     }
 
     set needsUpdate(value: boolean) {
@@ -138,7 +162,7 @@ export class GeometryData {
         const unitH = height / heightSeg;
 
         const indices = [];
-        const positions = [];
+        const vertices = [];
         const normals = [];
         const uvs = [];
 
@@ -148,7 +172,7 @@ export class GeometryData {
             const y = iy * unitH - halfHeight;
             for (let ix = 0; ix < widthSeg; ix++) {
                 const x = ix * unitW - halfWidth;
-                positions.push(x, y, 0);
+                vertices.push(x, y, 0);
 
                 normals.push(0, 0, 1);
 

@@ -13,7 +13,7 @@ struct GeometryInput {
     @location(2) uv: vec2<f32>,
     @location(3) color: vec3<f32>,
     @location(4) uv2: vec2<f32>,
-    @location(5) tabgent: vec3<f32>,
+    @location(5) tangent: vec3<f32>,
 };
 
  

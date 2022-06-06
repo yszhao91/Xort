@@ -21,6 +21,8 @@ export class RenderPipelineMananger extends BaseManager {
         return currentPipeline;
     }
     private _needsUpdate(_object: XortEntity, _cache: any) {
+        if (_cache)
+            return false;
         return true;
     }
 
@@ -42,12 +44,16 @@ export class RenderPipelineMananger extends BaseManager {
                 const stepMode = attribute.isInstance ? 'instance' : 'vertex';
 
                 vertexBuffers.push({
-                    arrayStride: attribute.stride,
-                    attributes: [{ shaderLocation: attribute.location, offset: attribute.offset, format: attribute.format }],
+                    arrayStride: attribute.stride * 4,
+                    attributes: [{
+                        shaderLocation: attribute.location,
+                        offset: attribute.offset,
+                        format: attribute.format
+                    }],
                     stepMode: stepMode
                 });
             }
-
+             
             const stageVertex: GPUVertexState = {
                 module: device.createShaderModule({
                     code: material.vertexShaderCode,
@@ -81,9 +87,14 @@ export class RenderPipelineMananger extends BaseManager {
                 multisample: {
                     count: sampleCount
                 },
+                depthStencil: {
+                    format: "depth24plus",
+                    depthWriteEnabled: true,
+                    depthCompare: "less"
+                }
                 // depthStencil: undefined,
                 // label: undefined,
-                layout: 'auto' as any,
+                // layout: 'auto' as any,
             })
             this.add(entity, renderPipeline)
             cachePipeline = renderPipeline;
