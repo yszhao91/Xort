@@ -90,7 +90,7 @@ export class MetaVision extends EventHandler {
             device: this.device,
             format: 'rgba8unorm',
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
-            compositingAlphaMode: 'opaque',//'premultiplied'
+            alphaMode: 'opaque',//'premultiplied'
             size: {
                 width: Math.floor(this._width * this._pixelRatio),
                 height: Math.floor(this._height * this._pixelRatio),
