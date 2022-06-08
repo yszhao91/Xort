@@ -26,6 +26,18 @@ export class RenderPipelineMananger extends BaseManager {
         return true;
     }
 
+    private _generateShaderGeometryInput(geometry: GeometryData) {
+        const locs = []
+        for (const key in geometry.attributes) {
+            const attr = geometry.attributes[key];
+            if (attr.stride > 1)
+                locs.push(`\t@location(${attr.location}) ${attr.name}: vec${attr.stride}<f32>,`);
+            else
+                locs.push(`\t@location(${attr.location}) ${attr.name}: vec${attr.stride}<f32>,`);
+
+        }
+        return `struct GeometryInput {\n${locs.join('\n')}  \n};`
+    }
 
     create(entity: XortEntity) {
         const material: MaterialData = entity.material?._asset as any;
@@ -53,10 +65,11 @@ export class RenderPipelineMananger extends BaseManager {
                     stepMode: stepMode
                 });
             }
-
+            const packVertexShaderCode = material.vertexShaderCode.replace('#Place{GeometryInput}', this._generateShaderGeometryInput(geometry));
+            console.log(packVertexShaderCode);
             const stageVertex: GPUVertexState = {
                 module: device.createShaderModule({
-                    code: material.vertexShaderCode,
+                    code: packVertexShaderCode,
                 }),
                 buffers: vertexBuffers,
                 entryPoint: material.vertexEntryPoint,
@@ -76,12 +89,7 @@ export class RenderPipelineMananger extends BaseManager {
             }
 
             const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
-                vertex: {
-                    module: device.createShaderModule({
-                        code: material.vertexShaderCode,
-                    }), buffers: [],
-                    entryPoint: 'main'
-                },
+                vertex: stageVertex,
                 fragment: stageFragment,
                 primitive: {
                     topology: material.topology,

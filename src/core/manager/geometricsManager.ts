@@ -23,20 +23,6 @@ export class GeometricsMananger extends BaseManager {
         }
     }
 
-    generateShaderGeometryInput(geometry: GeometryData) {
-        const locs = []
-        for (const key in geometry.attributes) {
-            const attr = geometry.attributes[key];
-            if (attr.stride > 1)
-                locs.push(`@location(0) ${attr.name}: vec${attr.stride}<f32>`);
-            else
-                locs.push(`@location(0) ${attr.name}: vec${attr.stride}<f32>`);
-
-        }
-        `struct GeometryInput {${} 
-        };`
-    }
-
     /**
      * 更新buffer 没有就创建
      * @param attribute 
