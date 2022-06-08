@@ -53,7 +53,7 @@ export class RenderPipelineMananger extends BaseManager {
                     stepMode: stepMode
                 });
             }
-             
+
             const stageVertex: GPUVertexState = {
                 module: device.createShaderModule({
                     code: material.vertexShaderCode,
@@ -76,7 +76,12 @@ export class RenderPipelineMananger extends BaseManager {
             }
 
             const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
-                vertex: stageVertex,
+                vertex: {
+                    module: device.createShaderModule({
+                        code: material.vertexShaderCode,
+                    }), buffers: [],
+                    entryPoint: 'main'
+                },
                 fragment: stageFragment,
                 primitive: {
                     topology: material.topology,
@@ -91,10 +96,10 @@ export class RenderPipelineMananger extends BaseManager {
                     format: "depth24plus",
                     depthWriteEnabled: true,
                     depthCompare: "less"
-                }
+                },
                 // depthStencil: undefined,
                 // label: undefined,
-                // layout: 'auto' as any,
+                layout: 'auto' as any,
             })
             this.add(entity, renderPipeline)
             cachePipeline = renderPipeline;

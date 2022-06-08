@@ -1,6 +1,6 @@
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
-import { BufferAttribute } from '../data/geometry';
+import { BufferAttribute, GeometryData } from '../data/geometry';
 import { isUndefNull } from '../../of/utils/types';
 
 export class GeometricsMananger extends BaseManager {
@@ -21,6 +21,20 @@ export class GeometricsMananger extends BaseManager {
             data.buffer.destroy();
             this._map.delete(attribute);
         }
+    }
+
+    generateShaderGeometryInput(geometry: GeometryData) {
+        const locs = []
+        for (const key in geometry.attributes) {
+            const attr = geometry.attributes[key];
+            if (attr.stride > 1)
+                locs.push(`@location(0) ${attr.name}: vec${attr.stride}<f32>`);
+            else
+                locs.push(`@location(0) ${attr.name}: vec${attr.stride}<f32>`);
+
+        }
+        `struct GeometryInput {${} 
+        };`
     }
 
     /**
