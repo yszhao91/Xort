@@ -52,6 +52,10 @@ export class MetaVision extends EventHandler {
 
         const device = await adapter.requestDevice(deviceDescriptor);
 
+        device.lost.then((info) => {
+            console.error(`WebGPU device was lost: ${info.message}`);
+        });
+
         const context = this._canvas.getContext('webgpu')!;
         // context.configure({ device, format: 'rgba8unorm' /* TODO */ });
         context.configure({
@@ -124,7 +128,7 @@ export class MetaVision extends EventHandler {
             })
 
         const textureView = this.context.getCurrentTexture().createView();
-        const depthView = scene.depthTexture.createView()
+        const depthView = scene.depthTexture.createView();
         const renderPass = commadnEncoder.beginRenderPass({
             colorAttachments: [{
                 view: textureView,
@@ -148,31 +152,33 @@ export class MetaVision extends EventHandler {
         for (let i = 0, len = scene.opaque.length; i < len; i++) {
             const opaqueObject = scene.opaque[i];
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
+            const layout: GPUBindGroupLayout = (pipeline as any).layout;
+
             const geometry = opaqueObject.geometry?._asset!;
-            // const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject);
+            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject, layout);
 
             renderPass.setPipeline(pipeline);
 
             for (const key in geometry.attributes) {
                 const attribute = geometry.attributes[key];
-                debugger
                 const gpuAttr: { buffer: GPUBuffer } = this.xort.geometricManager.get(attribute);
                 renderPass.setVertexBuffer(attribute.location, gpuAttr.buffer);
             }
             if (geometry.index) {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
                 renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
-            }
-
-            // this.renderPass.setBindGroup(0, bindGroup);
+            } 
+            renderPass.setBindGroup(0, bindGroup);
+this.device.queue.writeBuffer(bindGroup)
             if (geometry.index)
                 renderPass.drawIndexed(geometry.index.count);
             else
                 renderPass.draw(geometry.getAttribute('position').count);
+
+            renderPass.end();
         }
 
 
-        renderPass.end();
         this.device.queue.submit([commadnEncoder.finish()]);
     }
 

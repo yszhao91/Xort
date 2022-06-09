@@ -67,7 +67,7 @@ export class RenderPipelineMananger extends BaseManager {
             }
             const packVertexShaderCode = material.vertexShaderCode.replace('#Place{GeometryInput}', this._generateShaderGeometryInput(geometry));
             console.log(packVertexShaderCode);
-             
+
             const stageVertex: GPUVertexState = {
                 module: device.createShaderModule({
                     code: packVertexShaderCode,
@@ -88,14 +88,24 @@ export class RenderPipelineMananger extends BaseManager {
                     writeMask: material.colorWriteMask
                 }]
             }
+            // const bindGroupLayout = device.createBindGroupLayout({
+            //     entries: [{
+            //         binding: 0,
+            //         visibility: GPUShaderStage.VERTEX,
+            //         buffer: {}
+            //     }]
+            // });
 
             const renderPipeline: GPURenderPipeline = device.createRenderPipeline({
+                // layout: device.createPipelineLayout({
+                //     bindGroupLayouts: [bindGroupLayout]
+                // }),
                 vertex: stageVertex,
                 fragment: stageFragment,
                 primitive: {
                     topology: material.topology,
                     // frontFace: material.frontFace,
-                    cullMode:'none' //material.cullMode,
+                    cullMode: 'none' //material.cullMode,
                     // stripIndexFormat
                 },
                 multisample: {
@@ -108,10 +118,11 @@ export class RenderPipelineMananger extends BaseManager {
                 },
                 // depthStencil: undefined,
                 // label: undefined,
-                layout: 'auto' as any,
+                layout: 'auto',
             })
             this.add(entity, renderPipeline)
             cachePipeline = renderPipeline;
+            cachePipeline.layout = renderPipeline.getBindGroupLayout(0);
         }
         return cachePipeline;
     }
