@@ -14,7 +14,7 @@ const xort = new Xort(canvas);
 const scene = new XortScene(xort);
 const enitity = new XortEntity(xort);
 const geocom = new GeometryComponent();
-geocom._asset = GeometryData.cubeGeometry();
+geocom._asset = GeometryData.planeGeometry();
 enitity.addComponent(geocom);
 const matcom = new MaterialComponent();
 matcom._asset = new MaterialData();

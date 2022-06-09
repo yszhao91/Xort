@@ -121,13 +121,15 @@ export class GeometryData {
             this.index = Vec.max(index as any) > 65535 ?
                 new BufferAttribute(new Uint32Array(index), 1) :
                 new BufferAttribute(new Uint16Array(index), 1);
-            this.indexFormat = 'uint32';
+            this.indexFormat = Vec.max(index as any) > 65535 ? 'uint32' : 'uint16';
         } else {
             this.index = Vec.max(index as any) > 65535 ?
                 new BufferAttribute(index, 1) :
                 new BufferAttribute(index, 1);
-            this.indexFormat = 'uint16';
+            this.indexFormat = Vec.max(index as any) > 65535 ? 'uint32' : 'uint16';
         }
+
+        this.index.name = 'index';
     }
 
     getIndex() {
@@ -170,7 +172,7 @@ export class GeometryData {
         const heightSeg1 = (heightSeg + 1);
         for (let iy = 0; iy <= heightSeg; iy++) {
             const y = iy * unitH - halfHeight;
-            for (let ix = 0; ix < widthSeg; ix++) {
+            for (let ix = 0; ix <= widthSeg; ix++) {
                 const x = ix * unitW - halfWidth;
                 vertices.push(x, y, 0);
 
@@ -192,12 +194,13 @@ export class GeometryData {
                 indices.push(a, c, d);
             }
         }
-
+ 
         const geometry = new GeometryData();
         geometry.setAttribute('position', new Float32Array(vertices), 3);
         geometry.setAttribute('normal', new Float32Array(normals), 3);
         geometry.setAttribute('uv', new Float32Array(uvs), 2);
         geometry.setIndex(indices);
+        return geometry;
     }
 
     static cubeGeometry(width: number = 1, height: number = 1, depth = 1, widthSegment: number = 1, heightSegment: number = 1, depthSegment: number = 1) {

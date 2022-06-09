@@ -116,7 +116,7 @@ export class BindGroupManager extends BaseManager {
          */
         const device = this.xort._vision.device;
 
-        const size = (16 * 4 + 9 + 3) * 4;
+        const size = 304;//(16 * 4 + 9 + 3) * 4;
         const transfromUniformBuffer: GPUBuffer = device.createBuffer({
             size,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,

@@ -24,8 +24,8 @@ export class MetaVision extends EventHandler {
 
     _viewport: IViewport;
 
-    commadnEncoder!: GPUCommandEncoder;
-    renderPass!: GPURenderPassEncoder;
+    // commadnEncoder!: GPUCommandEncoder;
+    // renderPass!: GPURenderPassEncoder;
     constructor(private xort: Xort, canvas: HTMLCanvasElement, options: any) {
         super();
         this._options = options;
@@ -84,75 +84,96 @@ export class MetaVision extends EventHandler {
         this._canvas.style.width = width + 'px';
         this._canvas.style.height = height + 'px';
 
-        
+
         this.context.configure({
             device: this.device,
             format: 'rgba8unorm',
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
             alphaMode: 'opaque',//'premultiplied'
             size: {
-                width: Math.floor(this._width * this._pixelRatio),
-                height: Math.floor(this._height * this._pixelRatio),
+                width: this._width,
+                height: this._height,
                 depthOrArrayLayers: 1
             },
         });
         this.setViewport(0, 0, width, height);
+
+        this.xort.scene.depthTexture = this.device.createTexture({
+            size: [this._width, this._height, 1],
+            format: "depth24plus",
+            usage: GPUTextureUsage.RENDER_ATTACHMENT
+        })
 
     }
 
     render() {
         const pipelineManager = this.xort.renderpipelineManager;
         const bindGroupManager = this.xort.bindGroupManager;
-        this.commadnEncoder = this.device.createCommandEncoder()
+        const commadnEncoder = this.device.createCommandEncoder()
         const scene = this.xort.scene;
-        scene.opaque
+
+        const vp = this._viewport;
+        const width = vp.width
+        const height = vp.height
+
+        if (!scene.depthTexture)
+            scene.depthTexture = this.device.createTexture({
+                size: [width, height, 1],
+                format: "depth24plus",
+                usage: GPUTextureUsage.RENDER_ATTACHMENT
+            })
+
         const textureView = this.context.getCurrentTexture().createView();
-        this.renderPass = this.commadnEncoder.beginRenderPass({
+        const depthView = scene.depthTexture.createView()
+        const renderPass = commadnEncoder.beginRenderPass({
             colorAttachments: [{
                 view: textureView,
                 clearValue: scene.background.array,
                 loadOp: 'clear',
                 storeOp: 'store'
             }],
-            // depthStencilAttachment: {
-            //     view: scene.depthTexture,
-            //     depthClearValue: 1.0,
-            // }
+            depthStencilAttachment: {
+                view: depthView,
+                depthClearValue: 1.0,
+                depthLoadOp: 'clear',
+                depthStoreOp: "store",
+                /*stencilClearValue: 0,
+                stencilLoadOp: 'clear',
+                stencilStoreOp: "store"*/
+            }
         });
 
-        const vp = this._viewport;
-        const width = vp.width * this._pixelRatio;
-        const height = vp.height * this._pixelRatio;
-        this.renderPass.setViewport(vp.x, vp.y, width, height, vp.minDepth, vp.maxDepth);
+        renderPass.setViewport(vp.x, vp.y, width, height, vp.minDepth, vp.maxDepth);
 
         for (let i = 0, len = scene.opaque.length; i < len; i++) {
-            const opaqueObject = scene.opaque[i]; 
+            const opaqueObject = scene.opaque[i];
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
             const geometry = opaqueObject.geometry?._asset!;
-            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject);
+            // const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject);
 
-            this.renderPass.setPipeline(pipeline);
+            renderPass.setPipeline(pipeline);
 
             for (const key in geometry.attributes) {
-                const attribute = geometry.attributes[key]; 
+                const attribute = geometry.attributes[key];
+                debugger
                 const gpuAttr: { buffer: GPUBuffer } = this.xort.geometricManager.get(attribute);
-                this.renderPass.setVertexBuffer(attribute.location, gpuAttr.buffer);
+                renderPass.setVertexBuffer(attribute.location, gpuAttr.buffer);
             }
             if (geometry.index) {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
-                this.renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
+                renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
             }
- 
-            this.renderPass.setBindGroup(0, bindGroup);
+
+            // this.renderPass.setBindGroup(0, bindGroup);
             if (geometry.index)
-                this.renderPass.drawIndexed(geometry.index.count);
+                renderPass.drawIndexed(geometry.index.count);
             else
-                this.renderPass.draw(geometry.getAttribute('position').count);
+                renderPass.draw(geometry.getAttribute('position').count);
         }
 
 
-        this.renderPass.end();
-        this.device.queue.submit([this.commadnEncoder.finish()]);
+        renderPass.end();
+        this.device.queue.submit([commadnEncoder.finish()]);
     }
 
 }

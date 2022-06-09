@@ -3,10 +3,11 @@ import { Xort } from './xort';
 import { XortEntity } from './entity';
 import { IStringDictionary } from '../cga/utils/types';
 import { CameraComponent } from './component/camera';
+import { Undefinable } from '../of';
 export class XortScene extends XortEntity {
     _camera: XortEntity;
     background: Color = new Color(0.5, 0.5, 0.6);
-    depthTexture: any;
+    depthTexture: Undefinable<GPUTexture>;
     depth: boolean = true;
     _items: IStringDictionary<XortEntity> = {};
     opaque: XortEntity[] = [];

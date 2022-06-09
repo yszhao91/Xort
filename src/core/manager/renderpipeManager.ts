@@ -67,6 +67,7 @@ export class RenderPipelineMananger extends BaseManager {
             }
             const packVertexShaderCode = material.vertexShaderCode.replace('#Place{GeometryInput}', this._generateShaderGeometryInput(geometry));
             console.log(packVertexShaderCode);
+             
             const stageVertex: GPUVertexState = {
                 module: device.createShaderModule({
                     code: packVertexShaderCode,
@@ -93,8 +94,8 @@ export class RenderPipelineMananger extends BaseManager {
                 fragment: stageFragment,
                 primitive: {
                     topology: material.topology,
-                    frontFace: material.frontFace,
-                    cullMode: material.cullMode,
+                    // frontFace: material.frontFace,
+                    cullMode:'none' //material.cullMode,
                     // stripIndexFormat
                 },
                 multisample: {

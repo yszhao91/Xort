@@ -102,6 +102,7 @@ const depthTexture = device.createTexture({
     format: "depth24plus",
     usage: GPUTextureUsage.RENDER_ATTACHMENT
 });
+depthTexture.createView({})
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;

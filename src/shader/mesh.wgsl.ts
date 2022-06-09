@@ -1,4 +1,4 @@
-export const vertexShader =`
+export const vertexShader = `
 struct TransformUniform {     
     modelMatrix: mat4x4<f32>,
     modelViewMatrix: mat4x4<f32>,
@@ -36,10 +36,11 @@ fn isPerspectiveMatrix(m: mat4x4<f32>)->bool {
 @stage(vertex)
 fn main(in: GeometryInput) -> Output {
     var output:Output;
-    output.position = transform.projectionMatrix * transform.modelViewMatrix * vec4(in.position, 1.0);
-    output.v_normal = transform.normalMatrix * in.normal;
-    output.v_uv = in.uv;
-    // output.isPerspective = isPerspectiveMatrix(transform.projectionMatrix);
+    output.position = vec4(in.position, 0.0);
+    // output.position = transform.projectionMatrix * transform.modelViewMatrix * vec4(in.position, 1.0);
+    // output.v_normal = transform.normalMatrix * in.normal;
+    // output.v_uv = in.uv;
+    // // output.isPerspective = isPerspectiveMatrix(transform.projectionMatrix);
     output.v_color = vec4<f32>(1.0,1.0,1.0,1.0);
     return output;
 } `
@@ -57,5 +58,5 @@ struct Input {
 
 @stage(fragment)
 fn main(input: Input) -> @location(0) vec4<f32> {
-    return vec4<f32>(input.v_color);
+    return vec4<f32>(1.0,0.0,0.0,1.0);
 }`
