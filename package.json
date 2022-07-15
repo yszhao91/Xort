@@ -26,12 +26,11 @@
   },
   "homepage": "https://github.com/yszhao91/Xort#readme",
   "devDependencies": {
-    "@types/clone-deep": "^4.0.1",
-    "@webgpu/types": "^0.1.19",
-    "clone-deep": "^4.0.1",
+    "@types/node": "^18.0.0",
+    "@webgpu/types": "^0.1.20",
     "object_frame": "^0.0.20",
+    "spark-md5": "^3.0.2",
     "typescript": "^4.3.2",
-    "vite": "^2.6.4",
-    "xtorcga": "^0.0.69"
+    "vite": "^2.6.4"
   }
 }

@@ -37,6 +37,11 @@ export const DataType = {
     bmat4: 'mat4x4<bool>'
 }
 
+export interface IBindGroupData {
+    bindGroup: GPUBindGroup;
+    transfrom?: GPUBuffer;
+}
+
 export class BindGroupManager extends BaseManager {
 
     constructor(xort: Xort) {
@@ -64,14 +69,14 @@ export class BindGroupManager extends BaseManager {
         device.queue.writeBuffer(buffer, 0, data);
     }
 
-    acquire(entity: XortEntity, bindgrouplayout: GPUBindGroupLayout): GPUBindGroup {
+    acquire(entity: XortEntity, pipeline: GPURenderPipeline): IBindGroupData {
         const cache = this.get(entity);
         let currentBindGroup;
         if (this._needsUpdate(entity, cache)) {
-            currentBindGroup = this.create(entity, bindgrouplayout);
+            currentBindGroup = this.create(entity, pipeline);
             this.add(entity, currentBindGroup);
         } else {
-            currentBindGroup = cache; 
+            currentBindGroup = cache;
         }
 
         return currentBindGroup;
@@ -84,26 +89,29 @@ export class BindGroupManager extends BaseManager {
     }
 
 
-    create(entity: XortEntity, bindgrouplayout: GPUBindGroupLayout) {
-        const material: MaterialData = entity.material?._asset as any;
+    create(entity: XortEntity, pipeline: GPURenderPipeline): IBindGroupData {
         const device = this.xort._vision.device;
 
         const entries: GPUBindGroupEntry[] = [];
-        entries.push(this._createTransfromBuffer());
+        const transfromEntry: GPUBindGroupEntry = this._createTransfromBuffer();
+        entries.push(transfromEntry);
 
         const bindGroup: any = device.createBindGroup({
-            layout: bindgrouplayout,
+            layout: pipeline.getBindGroupLayout(0),
             entries: entries
-        }); 
+        });
 
-        return {
+        const result: IBindGroupData = {
             bindGroup,
-        };
+            transfrom: (transfromEntry.resource as GPUBufferBinding).buffer
+        }
+
+        return result;
     }
 
 
     private _createTransfromBuffer(): GPUBindGroupEntry {
-        /**
+        /* *
          * 
          * struct TransformUniform {     
          *     modelMatrix: mat4x4<f32>;
@@ -116,7 +124,7 @@ export class BindGroupManager extends BaseManager {
          */
         const device = this.xort._vision.device;
 
-        const size = 304;//(16 * 4 + 9 + 3) * 4;
+        const size = (16 * 4 + 9 + 3) * 4;
         const transfromUniformBuffer: GPUBuffer = device.createBuffer({
             size,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,

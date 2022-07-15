@@ -25,5 +25,5 @@
   },
   "include": [
     "./src"
-  ]
+, "src/nof/components/viewport.ts"  ]
 }

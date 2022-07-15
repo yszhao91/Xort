@@ -1,5 +1,6 @@
 import { EventHandler } from '../cga/render/eventhandler';
 import { Xort } from './xort';
+import { IBindGroupData } from './manager/bindGroupManager';
 
 export interface IViewport {
     x: number,
@@ -152,10 +153,9 @@ export class MetaVision extends EventHandler {
         for (let i = 0, len = scene.opaque.length; i < len; i++) {
             const opaqueObject = scene.opaque[i];
             const pipeline: GPURenderPipeline = pipelineManager.acquire(opaqueObject);
-            const layout: GPUBindGroupLayout = (pipeline as any).layout;
 
             const geometry = opaqueObject.geometry?._asset!;
-            const bindGroup: GPUBindGroup = bindGroupManager.acquire(opaqueObject, layout);
+            const bindGroupData: IBindGroupData = bindGroupManager.acquire(opaqueObject, pipeline);
 
             renderPass.setPipeline(pipeline);
 
@@ -167,18 +167,18 @@ export class MetaVision extends EventHandler {
             if (geometry.index) {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
                 renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
-            } 
-            renderPass.setBindGroup(0, bindGroup);
-this.device.queue.writeBuffer(bindGroup)
+            }
+            renderPass.setBindGroup(0, bindGroupData.bindGroup);
+            if (bindGroupData.transfrom)
+                this.device.queue.writeBuffer(bindGroupData.transfrom, 0, new Float32Array(16 * 4 + 9 + 3).fill(0))
             if (geometry.index)
                 renderPass.drawIndexed(geometry.index.count);
             else
                 renderPass.draw(geometry.getAttribute('position').count);
 
-            renderPass.end();
         }
-
-
+ 
+        renderPass.end();
         this.device.queue.submit([commadnEncoder.finish()]);
     }
 

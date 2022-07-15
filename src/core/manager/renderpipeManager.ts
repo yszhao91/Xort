@@ -121,8 +121,7 @@ export class RenderPipelineMananger extends BaseManager {
                 layout: 'auto',
             })
             this.add(entity, renderPipeline)
-            cachePipeline = renderPipeline;
-            cachePipeline.layout = renderPipeline.getBindGroupLayout(0);
+            cachePipeline = renderPipeline; 
         }
         return cachePipeline;
     }

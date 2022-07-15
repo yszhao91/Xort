@@ -9,4 +9,5 @@ export class BindGrouping {
         
         return transfromUniformBuffer;
     }
+    
 }

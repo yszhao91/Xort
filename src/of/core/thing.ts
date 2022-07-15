@@ -56,13 +56,7 @@ export abstract class Thing extends EventHandler {
   get className() {
     return this.constructor.name;
   }
-
-  clone(): Thing {
-    throw new Error('Method not implemented.');
-  }
-  copy(): Thing {
-    throw new Error('Method not implemented.');
-  }
+ 
 
   get level(): number {
     return this._level;
@@ -268,9 +262,9 @@ export abstract class Thing extends EventHandler {
       this.buildAccessors(this.descriptors);
   }
 
-  abstract toJSON(): any;
+  toJSON?: () => string;
 
-  abstract fromJSON(json: any): any;
+  fromJSON?: (json: any) => any;
 
   static fromJSON(json: any): any {
     const res = (this as any).constructor();
