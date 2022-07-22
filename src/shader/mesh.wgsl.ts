@@ -38,7 +38,7 @@ var<uniform> transform:TransformUniform;
 fn main(in: GeometryInput) -> Output {
     var output:Output;
     output.position = vec4(in.position, 1.0);
-    // output.position = transform.projectionMatrix * transform.modelViewMatrix * vec4(in.position, 1.0);
+    // output.position = transform. projectionMatrix * transform.modelViewMatrix * vec4(in.position, 1.0);
     // output.v_normal = transform.normalMatrix * in.normal;
     // output.v_uv = in.uv;
     // // output.isPerspective = isPerspectiveMatrix(transform.projectionMatrix);

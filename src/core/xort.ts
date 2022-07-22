@@ -69,7 +69,7 @@ export class Xort extends EventHandler {
         this._currentRenderState.init();
 
         if (this.sortObjects === true) {
-
+            
         }
     }
 

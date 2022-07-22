@@ -32,8 +32,7 @@ class MoveSystem extends System {
 }
 
 const world = new World({ entityPoolSize: 10000 });
-world.registerComponent(TransfromCom);
-debugger
+world.registerComponent(TransfromCom); 
 world.registerSystem(MoveSystem)
 
 

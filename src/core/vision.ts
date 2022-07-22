@@ -168,7 +168,9 @@ export class MetaVision extends EventHandler {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
                 renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
             }
+             
             renderPass.setBindGroup(0, bindGroupData.bindGroup);
+
             if (bindGroupData.transfrom)
                 this.device.queue.writeBuffer(bindGroupData.transfrom, 0, new Float32Array(16 * 4 + 9 + 3).fill(0))
             if (geometry.index)
@@ -177,9 +179,12 @@ export class MetaVision extends EventHandler {
                 renderPass.draw(geometry.getAttribute('position').count);
 
         }
- 
+  
         renderPass.end();
         this.device.queue.submit([commadnEncoder.finish()]);
     }
 
+    _renderObject() {
+        
+    } 
 }
