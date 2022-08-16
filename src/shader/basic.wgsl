@@ -83,7 +83,7 @@ fn isPerspectiveMatrix(m: mat4x4<f32>) {
 
 @binding(0) @group(0) var<uniform> transform:TransformUniform; 
 
-@stage(vertex)
+@vertex
 fn vs_main(in: GeometryInput) -> Output {
     var output:Output;
     output.v_position = transform.projectionMatrix * transform.modelViewMatrix * vec3(in.position, 1.0);

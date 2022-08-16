@@ -21,7 +21,7 @@ struct GeometryInput {
     // @location(3) uv: vec2<f32>,  
 };
 
-@stage(vertex)
+@vertex
 fn vs_main(in: GeometryInput) -> Output {  
     var output:Output; 
     output.v_position = in.position;
@@ -35,7 +35,7 @@ struct Input {
     @location(2) v_color: vec4<f32>, 
     @location(1) v_uv: vec2<f32>
 };
-@stage(fragment)
+@fragment
 fn fs_main(input:Input)->@location(0) vec4<f32>{
     return input.v_color;
 }`

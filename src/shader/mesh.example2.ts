@@ -13,7 +13,7 @@ struct Output {
     @location(2) v_uv: vec2<f32>, 
 };
   
-@stage(vertex)
+@vertex
 fn main(in: GeometryInput) -> Output {
     var output:Output;
     output.v_position = vec4<f32>(in.position, 1.0);
@@ -33,7 +33,7 @@ struct Input {
     // @location(3) isPerspective: bool, 
 };
 
-@stage(fragment)
+@fragment
 fn main(input:Input) ->@location(0) vec4<f32> {
-    return inp;
+    return input.v_color;
 }`
