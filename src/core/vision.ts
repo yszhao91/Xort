@@ -63,7 +63,7 @@ export class MetaVision extends EventHandler {
             device,
             format: 'rgba8unorm',
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
-            alphaMode: 'opaque',//'premultiplied' 
+            alphaMode: 'opaque',//'premultiplied'  
         });
 
         this.adapter = adapter;
@@ -168,7 +168,7 @@ export class MetaVision extends EventHandler {
                 const bufferData = this.xort.geometricManager.get(geometry.index);
                 renderPass.setIndexBuffer(bufferData.buffer, geometry.indexFormat);
             }
-             
+
             renderPass.setBindGroup(0, bindGroupData.bindGroup);
 
             if (bindGroupData.transfrom)
@@ -179,12 +179,12 @@ export class MetaVision extends EventHandler {
                 renderPass.draw(geometry.getAttribute('position').count);
 
         }
-  
+
         renderPass.end();
         this.device.queue.submit([commadnEncoder.finish()]);
     }
 
     _renderObject() {
-        
-    } 
+
+    }
 }

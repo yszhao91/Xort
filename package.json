@@ -1,5 +1,5 @@
 {
-  "name": "xort",
+  "name": "@xort/xort",
   "version": "0.0.1",
   "description": "web 3D 渲染引擎框架",
   "main": "index.js",
