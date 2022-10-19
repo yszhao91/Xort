@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^18.0.0",
     "@webgpu/types": "^0.1.20",
+    "@xort/of": "^0.0.45",
     "object_frame": "^0.0.20",
     "spark-md5": "^3.0.2",
     "typescript": "^4.3.2",
