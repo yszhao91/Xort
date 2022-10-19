@@ -1,6 +1,5 @@
-import { Vec } from "../../cga/math/Vec";
+import { Vec3, vecs } from "@xort/cga"
 import { IStringDictionary } from "../../of";
-import { Vec3 } from '../../cga/math/Vec3';
 export type TypedArray =
     Int8Array
     | Uint8Array
@@ -118,15 +117,15 @@ export class GeometryData {
         if (index instanceof BufferAttribute) {
             this.index = index;
         } else if (Array.isArray(index)) {
-            this.index = Vec.max(index as any) > 65535 ?
+            this.index = vecs.max(index as any) > 65535 ?
                 new BufferAttribute(new Uint32Array(index), 1) :
                 new BufferAttribute(new Uint16Array(index), 1);
-            this.indexFormat = Vec.max(index as any) > 65535 ? 'uint32' : 'uint16';
+            this.indexFormat = vecs.max(index as any) > 65535 ? 'uint32' : 'uint16';
         } else {
-            this.index = Vec.max(index as any) > 65535 ?
+            this.index = vecs.max(index as any) > 65535 ?
                 new BufferAttribute(index, 1) :
                 new BufferAttribute(index, 1);
-            this.indexFormat = Vec.max(index as any) > 65535 ? 'uint32' : 'uint16';
+            this.indexFormat = vecs.max(index as any) > 65535 ? 'uint32' : 'uint16';
         }
 
         this.index.name = 'index';
@@ -194,7 +193,7 @@ export class GeometryData {
                 indices.push(a, c, d);
             }
         }
- 
+
         const geometry = new GeometryData();
         geometry.setAttribute('position', new Float32Array(vertices), 3);
         geometry.setAttribute('normal', new Float32Array(normals), 3);
