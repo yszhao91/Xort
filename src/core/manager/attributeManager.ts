@@ -1,6 +1,6 @@
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
-import { BufferAttribute } from '../data/geometry';
+import { BufferAttribute } from '../../ecs/data/geometry';
 
 export class AttributeManager extends BaseManager {
     constructor(xort: Xort) {

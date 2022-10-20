@@ -1,5 +1,5 @@
 
-import { GeometryData } from './core/data/geometry';
+import { GeometryData } from './ecs/data/geometry';
 import { fragmentShader, vertexShader } from './shader/mesh.example2';
 
 const canvas: HTMLCanvasElement = document.getElementById('canvas') as any;

@@ -1,4 +1,4 @@
-import { Texture } from "../data/texture";
+import { Texture } from "../../ecs/data/texture";
 import { Xort } from "../xort";
 import { BaseManager } from "./baseManager";
 import { XortEntity } from '../entity';

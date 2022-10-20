@@ -1,5 +1,5 @@
-import { Vec3, vecs } from "@xort/cga"
-import { IStringDictionary } from "../../of";
+import { Vec3, vecs } from "@xort/cga" 
+import { IStringDictionary } from "@xort/of";
 export type TypedArray =
     Int8Array
     | Uint8Array

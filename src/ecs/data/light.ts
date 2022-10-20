@@ -1,4 +1,5 @@
-import { Color } from '../../cga/math/Color';
+import { Color } from "@xort/cga";
+ 
 export enum ILightType {
     Ambient = 0,
     Directional = 1,

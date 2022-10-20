@@ -1,8 +1,8 @@
+import { isUndefNull } from '@xort/of';
+import { BufferAttribute } from '../../ecs/data/geometry';
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
-import { BufferAttribute, GeometryData } from '../data/geometry';
-import { isUndefNull } from '../../of/utils/types';
-
+ 
 export class GeometricsMananger extends BaseManager {
     constructor(xort: Xort) {
         super(xort);
@@ -51,6 +51,7 @@ export class GeometricsMananger extends BaseManager {
             data.version = attribute.version;
         }
     }
+    
 
     private _createBuffer(geometry: BufferAttribute, usage?: GPUBufferUsage) {
         const array = geometry.array;

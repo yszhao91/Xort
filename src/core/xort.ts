@@ -1,17 +1,17 @@
-import { EventHandler } from "../of";
+
 import { MetaVision } from './vision';
 import { XortScene } from "./scene";
 import { GeometricsMananger } from './manager/geometricsManager';
 import { TextureManager } from './manager/texturemanager';
-import { Timer } from '../of/core/timer';
 import { AttributeManager } from './manager/attributeManager';
 import { Statistics } from "./statistics";
 import { RenderStatesManager } from "./manager/renderStatesManager";
 import { RenderPipelineMananger } from "./manager/renderpipeManager";
 import { BindGroupManager } from "./manager/bindGroupManager";
+import { Timer } from 'object_frame';
+ 
 
-
-export class Xort extends EventHandler {
+export class Xort {
     _vision: MetaVision;
     _scene: XortScene;
     _timer: Timer = new Timer(true);
@@ -32,8 +32,7 @@ export class Xort extends EventHandler {
      * 渲染物体是否要按距离排序
      */
     sortObjects: boolean = true;
-    constructor(canvas: HTMLCanvasElement) {
-        super();
+    constructor(canvas: HTMLCanvasElement) { 
         this._vision = new MetaVision(this, canvas, {});
         this._scene = new XortScene(this);
 
@@ -44,8 +43,7 @@ export class Xort extends EventHandler {
         this.renderpipelineManager = new RenderPipelineMananger(this);
         this.renderStateManager = new RenderStatesManager(this);
         this.bindGroupManager = new BindGroupManager(this);
-
-        this.defaultLoop = this.loop.bind(this)
+ 
     }
 
     /**
@@ -61,25 +59,7 @@ export class Xort extends EventHandler {
         if (loop)
             this.defaultLoop()
     }
-
-    preHandle() {
-        this.scene.nextStep(this);
-
-        this._currentRenderState = this.renderStateManager.get(this.scene);
-        this._currentRenderState.init();
-
-        if (this.sortObjects === true) {
-            
-        }
-    }
-
-    loop() {
-        this.preHandle();
-
-        this._vision.render();
-
-        requestAnimationFrame(this.defaultLoop);
-    }
+  
 
     get scene() {
         return this._scene;

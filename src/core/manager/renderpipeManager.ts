@@ -1,8 +1,8 @@
 import { BaseManager } from './baseManager';
 import { Xort } from '../xort';
 import { XortEntity } from '../entity';
-import { MaterialData } from '../data/material';
-import { GeometryData } from '../data/geometry';
+import { MaterialData } from '../../ecs/data/material';
+import { GeometryData } from '../../ecs/data/geometry';
 export class RenderPipelineMananger extends BaseManager {
     constructor(xort: Xort) {
         super(xort)

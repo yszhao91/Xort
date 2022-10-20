@@ -2,14 +2,17 @@ import { XortScene } from "./core/scene";
 import { Xort } from "./core/xort";
 import { XortEntity } from './core/entity';
 import { GeometryComponent } from './core/component/geometry';
-import { GeometryData } from "./core/data/geometry";
+import { GeometryData } from "./ecs/data/geometry";
 import { MaterialComponent } from "./core/component/material";
-import { MaterialData } from "./core/data/material";
+import { MaterialData } from "./ecs/data/material";
+import { World } from "@xort/of";
 
 const canvas = document.getElementById('canvas')! as HTMLCanvasElement;
 const xort = new Xort(canvas);
 
 (window as any).xort = xort;
+
+const world = new World({editor:xort})
 
 const scene = new XortScene(xort);
 const enitity = new XortEntity(xort);

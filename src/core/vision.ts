@@ -1,4 +1,3 @@
-import { EventHandler } from '../cga/render/eventhandler';
 import { Xort } from './xort';
 import { IBindGroupData } from './manager/bindGroupManager';
 
@@ -10,7 +9,7 @@ export interface IViewport {
     minDepth: number,
     maxDepth: number,
 }
-export class MetaVision extends EventHandler {
+export class MetaVision {
     isSupportWebGPU: boolean;
     private _canvas: HTMLCanvasElement;
     _options: any;
@@ -28,7 +27,6 @@ export class MetaVision extends EventHandler {
     // commadnEncoder!: GPUCommandEncoder;
     // renderPass!: GPURenderPassEncoder;
     constructor(private xort: Xort, canvas: HTMLCanvasElement, options: any) {
-        super();
         this._options = options;
         this._canvas = canvas;
         this.isSupportWebGPU = typeof GPUAdapter !== undefined;
@@ -133,7 +131,7 @@ export class MetaVision extends EventHandler {
         const renderPass = commadnEncoder.beginRenderPass({
             colorAttachments: [{
                 view: textureView,
-                clearValue: scene.background.array,
+                clearValue: [1, 1, 1, 1],
                 loadOp: 'clear',
                 storeOp: 'store'
             }],

@@ -1,8 +1,10 @@
-import { Texture } from './texture';
-import { Undefinable } from '../../of/utils/types';
+import { Texture } from './texture'; 
 import { fragmentShader, vertexShader } from '../../shader/mesh.wgsl';
+import { Undefinable } from '@xort/of';
+
 const baseVertexCode: string = vertexShader
 const fragmentVertexCode: string = fragmentShader;
+
 export class MaterialData {
     uniforms: any;
     attributes: any;

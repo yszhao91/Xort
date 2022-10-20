@@ -1,9 +1,9 @@
-import { MaterialData } from '../data/material';
+import { MaterialData } from '../../ecs/data/material';
 import { XortEntity } from '../entity';
 import { Xort } from '../xort';
 import { BaseManager } from './baseManager';
 import { TransformComponent } from '../../of/extends/component/transform';
-import { CameraComponent } from '../component/camera';
+import { CameraComponent } from '../../ecs/asset.ts/camera';
 
 export const DataType = {
     float: 'f32',

@@ -1,12 +1,15 @@
-import { Asset } from "@xort/of"; 
+import { Component, IDescriptor } from "../../of";
+import { GeometryData } from '../data/geometry';
 
-export class GeometryAsset extends Asset {
-    position: Array<number> =  [];
-    index?: Array<number>;
-    normal?: Array<number>;
-    uvs?: Array<number>;
-    tangent?: Array<number>;
+export class GeometryComponent extends Component<any> {
+    declare _asset: GeometryData;
+    constructor() {
+        super();
+        this.descriptors = [{ name: 'asset' }]
+    }
 
+    onChange(_descriptor?: IDescriptor, _value?: any): void {
 
-    
+    }
+
 }
